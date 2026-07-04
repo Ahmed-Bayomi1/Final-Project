@@ -1,14 +1,99 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { PATHS } from "../Routes/pathes";
+import { supabase } from "../supabase";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './LandingPage.css';
 
 function AuthModalContent({ role, onClose, hideSignUp = false }) {
+    const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState('sign-in');
+    const [signInEmail, setSignInEmail] = useState('');
+    const [signInPassword, setSignInPassword] = useState('');
+    const [signInError, setSignInError] = useState('');
+    const [signInLoading, setSignInLoading] = useState(false);
+    const [fullName, setFullName] = useState('');
+    const [nationalId, setNationalId] = useState('');
+    const [phone, setPhone] = useState('');
+    const [dob, setDob] = useState('');
+    const [address, setAddress] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
+    const [loading, setLoading] = useState(false);
     const isPharmacy = role === 'pharmacy';
     const isAdmin = role === 'admin';
     const shouldShowSignUp = !hideSignUp;
+
+    async function handleSignIn(event) {
+        event.preventDefault();
+        setSignInError('');
+        setSignInLoading(true);
+
+        const { error } = await supabase.auth.signInWithPassword({
+            email: signInEmail.trim(),
+            password: signInPassword,
+        });
+
+        if (error) {
+            setSignInError(error.message || 'Invalid email or password');
+            setSignInLoading(false);
+            return;
+        }
+
+        setSignInLoading(false);
+        if (onClose) {
+            onClose();
+        }
+
+        if (role === 'admin') {
+            navigate('/admin');
+        } else if (role === 'pharmacy') {
+            navigate('/pharmacy');
+        } else {
+            navigate('/user');
+        }
+    }
+
+    async function handleSignUp(event) {
+        event.preventDefault();
+        setErrorMessage('');
+        setLoading(true);
+
+        const { data, error } = await supabase.auth.signUp({
+            email,
+            password,
+            options: {
+                data: {
+                    full_name: fullName,
+                    national_id: nationalId,
+                    phone,
+                    dob,
+                    address,
+                    role: isPharmacy ? 'pharmacy' : 'user',
+                },
+            },
+        });
+
+        setLoading(false);
+
+        if (error) {
+            setErrorMessage(error.message || 'Unable to create your account. Please try again.');
+            return;
+        }
+
+        if (data?.user) {
+            alert('Account created successfully! Please sign in.');
+            setActiveTab('sign-in');
+            setFullName('');
+            setNationalId('');
+            setPhone('');
+            setDob('');
+            setAddress('');
+            setEmail('');
+            setPassword('');
+        }
+    }
 
     return (
         <div className="landing-page__modal-overlay d-flex align-items-center justify-content-center p-3" onClick={onClose}>
@@ -64,7 +149,7 @@ function AuthModalContent({ role, onClose, hideSignUp = false }) {
                 )}
 
                 {activeTab === 'sign-in' ? (
-                    <div className="landing-page__auth-panel">
+                    <form className="landing-page__auth-panel" onSubmit={handleSignIn}>
                         <div className="landing-page__field d-flex align-items-center w-100">
                             <span className="landing-page__field-icon">📧</span>
                             <input
@@ -72,6 +157,9 @@ function AuthModalContent({ role, onClose, hideSignUp = false }) {
                                 placeholder="your.email@example.com"
                                 aria-label="Email"
                                 className="landing-page__input w-100"
+                                value={signInEmail}
+                                onChange={(event) => setSignInEmail(event.target.value)}
+                                required
                             />
                         </div>
 
@@ -82,15 +170,34 @@ function AuthModalContent({ role, onClose, hideSignUp = false }) {
                                 placeholder="Password"
                                 aria-label="Password"
                                 className="landing-page__input w-100"
+                                value={signInPassword}
+                                onChange={(event) => setSignInPassword(event.target.value)}
+                                required
                             />
                         </div>
 
-                        <button type="button" className="landing-page__action-button w-100">
-                            {isAdmin ? 'Sign In to Admin Panel' : isPharmacy ? 'Sign In to Dashboard' : 'Sign In'}
+                        {signInError ? (
+                            <p className="landing-page__auth-error" role="alert">
+                                {signInError}
+                            </p>
+                        ) : null}
+
+                        <button
+                            type="submit"
+                            className="landing-page__action-button w-100"
+                            disabled={signInLoading}
+                        >
+                            {signInLoading
+                                ? 'Signing in...'
+                                : isAdmin
+                                    ? 'Sign In to Admin Panel'
+                                    : isPharmacy
+                                        ? 'Sign In to Dashboard'
+                                        : 'Sign In'}
                         </button>
-                    </div>
+                    </form>
                 ) : (
-                    <div className="landing-page__auth-panel">
+                    <form className="landing-page__auth-panel" onSubmit={handleSignUp}>
                         <div className="landing-page__field d-flex align-items-center w-100">
                             <span className="landing-page__field-icon">👤</span>
                             <input
@@ -98,6 +205,9 @@ function AuthModalContent({ role, onClose, hideSignUp = false }) {
                                 placeholder={isPharmacy ? 'Pharmacy Manager Name' : 'Sara Ahmed'}
                                 aria-label="Full Name"
                                 className="landing-page__input w-100"
+                                value={fullName}
+                                onChange={(event) => setFullName(event.target.value)}
+                                required
                             />
                         </div>
 
@@ -108,6 +218,9 @@ function AuthModalContent({ role, onClose, hideSignUp = false }) {
                                 placeholder={isPharmacy ? 'Pharmacy Registration Number' : '29801234567890'}
                                 aria-label="National ID"
                                 className="landing-page__input w-100"
+                                value={nationalId}
+                                onChange={(event) => setNationalId(event.target.value)}
+                                required
                             />
                         </div>
 
@@ -118,6 +231,9 @@ function AuthModalContent({ role, onClose, hideSignUp = false }) {
                                 placeholder="010 xxxx xxxx"
                                 aria-label="Phone Number"
                                 className="landing-page__input w-100"
+                                value={phone}
+                                onChange={(event) => setPhone(event.target.value)}
+                                required
                             />
                         </div>
 
@@ -128,6 +244,9 @@ function AuthModalContent({ role, onClose, hideSignUp = false }) {
                                 placeholder="Date of Birth"
                                 aria-label="Date of Birth"
                                 className="landing-page__input w-100"
+                                value={dob}
+                                onChange={(event) => setDob(event.target.value)}
+                                required
                             />
                         </div>
 
@@ -138,6 +257,22 @@ function AuthModalContent({ role, onClose, hideSignUp = false }) {
                                 placeholder={isPharmacy ? 'Pharmacy Address' : '12 El-Nasr St, Cairo'}
                                 aria-label="Address"
                                 className="landing-page__input w-100"
+                                value={address}
+                                onChange={(event) => setAddress(event.target.value)}
+                                required
+                            />
+                        </div>
+
+                        <div className="landing-page__field d-flex align-items-center w-100">
+                            <span className="landing-page__field-icon">📧</span>
+                            <input
+                                type="email"
+                                placeholder="your.email@example.com"
+                                aria-label="Email"
+                                className="landing-page__input w-100"
+                                value={email}
+                                onChange={(event) => setEmail(event.target.value)}
+                                required
                             />
                         </div>
 
@@ -148,13 +283,22 @@ function AuthModalContent({ role, onClose, hideSignUp = false }) {
                                 placeholder="Password"
                                 aria-label="Password"
                                 className="landing-page__input w-100"
+                                value={password}
+                                onChange={(event) => setPassword(event.target.value)}
+                                required
                             />
                         </div>
 
-                        <button type="button" className="landing-page__action-button w-100">
-                            {isPharmacy ? 'Create Pharmacy Account' : 'Create Account'}
+                        {errorMessage ? (
+                            <p className="text-danger mt-2 mb-0" role="alert">
+                                {errorMessage}
+                            </p>
+                        ) : null}
+
+                        <button type="submit" className="landing-page__action-button w-100" disabled={loading}>
+                            {loading ? 'Please wait...' : isPharmacy ? 'Create Pharmacy Account' : 'Create Account'}
                         </button>
-                    </div>
+                    </form>
                 )}
             </div>
         </div>
