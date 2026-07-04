@@ -1,0 +1,160 @@
+    .landing-page {
+    min-height: 100vh;
+    background: linear-gradient(160deg, #f4f7ff 0%, #ffffff 55%, #f0fbf6 100%);
+    display: flex;
+    flex-direction: column;
+    }
+
+    .landing-page__header {
+    padding: 20px 32px;
+    }
+
+    .landing-page__brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    }
+
+    .landing-page__logo {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: #2f5bff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    }
+
+    .landing-page__brand-name {
+    font-weight: 800;
+    font-size: 18px;
+    color: #0f172a;
+    }
+
+    .landing-page__hero {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 40px 20px 60px;
+    }
+
+    .landing-page__pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #eef2ff;
+    color: #2f5bff;
+    font-weight: 600;
+    font-size: 13px;
+    padding: 6px 16px;
+    border-radius: 999px;
+    margin-bottom: 24px;
+    }
+
+    .landing-page__heading {
+    font-size: 48px;
+    font-weight: 800;
+    color: #0f172a;
+    max-width: 720px;
+    line-height: 1.15;
+    margin: 0 0 20px;
+    }
+
+    .landing-page__heading-accent {
+    color: #2f5bff;
+    }
+
+    .landing-page__subtext {
+    color: #64748b;
+    font-size: 17px;
+    max-width: 560px;
+    line-height: 1.6;
+    margin: 0 0 40px;
+    }
+
+    .landing-page__portals {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(220px, 1fr));
+    gap: 20px;
+    width: 100%;
+    max-width: 960px;
+    margin-bottom: 48px;
+    }
+
+    .landing-page__portal-card {
+    background: #fff;
+    border: 1px solid #e5e9f2;
+    border-radius: 16px;
+    padding: 24px;
+    text-align: left;
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .landing-page__portal-card:hover {
+    border-color: #2f5bff;
+    box-shadow: 0 8px 24px rgba(47, 91, 255, 0.12);
+    }
+
+    .landing-page__portal-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    background: #eef2ff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    }
+
+    .landing-page__portal-title {
+    font-weight: 700;
+    font-size: 17px;
+    color: #0f172a;
+    }
+
+    .landing-page__portal-arrow {
+    color: #94a3b8;
+    }
+
+    .landing-page__portal-description {
+    color: #64748b;
+    font-size: 14px;
+    line-height: 1.5;
+    }
+
+    .landing-page__stats {
+    display: flex;
+    gap: 48px;
+    flex-wrap: wrap;
+    justify-content: center;
+    }
+
+    .landing-page__stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    }
+
+    .landing-page__stat-value {
+    font-size: 24px;
+    font-weight: 800;
+    color: #0f172a;
+    }
+
+    .landing-page__stat-label {
+    font-size: 13px;
+    color: #64748b;
+    }
+
+    .landing-page__footer {
+    text-align: center;
+    padding: 24px;
+    color: #94a3b8;
+    font-size: 13px;
+    }

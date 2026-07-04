@@ -1,0 +1,279 @@
+    :root {
+    --pc-blue: #2e5cff;
+    --pc-blue-dark: #1f47d6;
+    --pc-blue-light: #edf1ff;
+    --pc-text: #1f2a44;
+    --pc-muted: #6b7a99;
+    --pc-border: #edeff3;
+    --pc-danger: #ff4d4d;
+    }
+
+    /* ===== Navbar shell ===== */
+    .pc-navbar {
+    position: sticky;
+    top: 0;
+    z-index: 1030;
+    background: #fff;
+    border-bottom: 1px solid var(--pc-border);
+    padding: 0.85rem 0;
+    transition: box-shadow 0.2s ease, padding 0.2s ease;
+    }
+
+    /* subtle "lift" once the page scrolls, so it reads as floating */
+    .pc-navbar--scrolled {
+    box-shadow: 0 6px 20px rgba(15, 23, 42, 0.06);
+    padding: 0.6rem 0;
+    }
+
+    /* ===== Back button ===== */
+    .pc-back-btn {
+    background: transparent;
+    border: none;
+    color: var(--pc-muted);
+    font-size: 1.15rem;
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 0.4rem;
+    transition: background 0.15s ease, color 0.15s ease;
+    }
+    .pc-back-btn:hover {
+    background: #f5f7fb;
+    color: var(--pc-text);
+    }
+    .pc-back-btn:focus-visible {
+    outline: 2px solid var(--pc-blue);
+    outline-offset: 2px;
+    }
+
+    /* ===== Brand ===== */
+    .pc-brand-link {
+    transition: opacity 0.15s ease;
+    }
+    .pc-brand-link:hover {
+    opacity: 0.85;
+    }
+
+    .pc-logo-icon {
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(135deg, var(--pc-blue), var(--pc-blue-dark));
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 1rem;
+    margin-right: 0.6rem;
+    box-shadow: 0 4px 10px rgba(46, 92, 255, 0.25);
+    }
+
+    .pc-brand {
+    font-weight: 700;
+    color: var(--pc-text);
+    font-size: 1.15rem;
+    letter-spacing: -0.01em;
+    }
+
+    /* ===== Animated hamburger -> X toggler ===== */
+    .pc-toggler {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    width: 38px;
+    height: 38px;
+    border: none;
+    border-radius: 10px;
+    background: transparent;
+    cursor: pointer;
+    }
+    .pc-toggler:hover {
+    background: #f5f7fb;
+    }
+    .pc-toggler span {
+    display: block;
+    height: 2px;
+    width: 20px;
+    margin: 0 auto;
+    background: var(--pc-text);
+    border-radius: 2px;
+    transition: transform 0.25s ease, opacity 0.2s ease;
+    }
+    .pc-toggler--open span:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+    }
+    .pc-toggler--open span:nth-child(2) {
+    opacity: 0;
+    }
+    .pc-toggler--open span:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+    }
+
+    /* ===== Nav links ===== */
+    .pc-nav-link {
+    color: var(--pc-muted) !important;
+    font-weight: 500;
+    padding: 0.55rem 1rem !important;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    position: relative;
+    transition: color 0.15s ease, background 0.15s ease;
+    }
+    .pc-nav-link:hover {
+    color: var(--pc-text) !important;
+    background: #f5f7fb;
+    }
+    .pc-nav-link:focus-visible {
+    outline: 2px solid var(--pc-blue);
+    outline-offset: 2px;
+    }
+    .pc-nav-link.active {
+    color: var(--pc-blue) !important;
+    background: var(--pc-blue-light);
+    }
+    /* small indicator dot under the active link, desktop only */
+    .pc-nav-link.active::after {
+    content: "";
+    position: absolute;
+    bottom: -1px;
+    left: 50%;
+    translate: -50% 0;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--pc-blue);
+    display: none;
+    }
+    @media (min-width: 992px) {
+    .pc-nav-link.active::after {
+        display: block;
+    }
+    }
+
+    /* ===== Right actions ===== */
+    .pc-right-actions {
+    gap: 0.4rem;
+    }
+
+    .pc-icon-btn {
+    position: relative;
+    background: transparent;
+    border: none;
+    color: var(--pc-muted);
+    font-size: 1.2rem;
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s ease, color 0.15s ease;
+    }
+    .pc-icon-btn:hover {
+    background: #f5f7fb;
+    color: var(--pc-text);
+    }
+    .pc-icon-btn:focus-visible {
+    outline: 2px solid var(--pc-blue);
+    outline-offset: 2px;
+    }
+
+    .pc-dot {
+    position: absolute;
+    top: 6px;
+    right: 7px;
+    width: 8px;
+    height: 8px;
+    background: var(--pc-danger);
+    border-radius: 50%;
+    border: 2px solid #fff;
+    animation: pc-pulse 2s infinite;
+    }
+    @keyframes pc-pulse {
+    0%   { box-shadow: 0 0 0 0 rgba(255, 77, 77, 0.45); }
+    70%  { box-shadow: 0 0 0 5px rgba(255, 77, 77, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(255, 77, 77, 0); }
+    }
+
+    .pc-divider {
+    width: 1px;
+    height: 24px;
+    background: var(--pc-border);
+    margin: 0 0.4rem;
+    }
+
+    .pc-signout {
+    background: transparent;
+    border: none;
+    color: var(--pc-muted);
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 10px;
+    transition: background 0.15s ease, color 0.15s ease;
+    }
+    .pc-signout:hover {
+    color: var(--pc-danger);
+    background: #fff1f1;
+    }
+    .pc-signout:focus-visible {
+    outline: 2px solid var(--pc-blue);
+    outline-offset: 2px;
+    }
+
+    /* ===== Mobile collapse behaviour (custom, not relying on Bootstrap JS) ===== */
+    .pc-navbar-collapse-wrap {
+    display: none;
+    }
+    .pc-navbar-collapse-wrap--open {
+    display: block;
+    animation: pc-slide-down 0.2s ease;
+    }
+    @keyframes pc-slide-down {
+    from { opacity: 0; transform: translateY(-6px); }
+    to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 991.98px) {
+    .pc-toggler {
+        display: flex;
+    }
+    .pc-navbar-collapse-wrap {
+        width: 100%;
+        padding-top: 0.75rem;
+        margin-top: 0.75rem;
+        border-top: 1px solid var(--pc-border);
+    }
+    .pc-nav-link {
+        padding: 0.7rem 1rem !important;
+    }
+    .pc-right-actions {
+        width: 100%;
+        justify-content: space-between;
+        padding-top: 0.6rem;
+        margin-top: 0.4rem;
+        border-top: 1px dashed var(--pc-border);
+    }
+    .pc-divider {
+        display: none;
+    }
+    .pc-signout span {
+        display: inline;
+    }
+    }
+
+    @media (min-width: 992px) {
+    .pc-navbar-collapse-wrap {
+        display: flex !important;
+        align-items: center;
+        flex: 1 1 auto;
+    }
+    }
