@@ -23,6 +23,13 @@
 
         <Route path={PATHS.ADMIN_LOGIN} element={<AdminLogin />} />
         <Route path={PATHS.ADMIN_SIGNUP} element={<AdminSignUp />} />
+
+        <Route path="/user" element={<Userlayout />}>
+            <Route path="home" element={<HomeUser />} />
+            <Route path="search" element={<SearchUser />} />
+            <Route path="reservations" element={<ReserveUser />} />
+            <Route path="profile" element={<ProfileUser />} />
+        </Route>
         </Routes>
     );
     }

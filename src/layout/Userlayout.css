@@ -1,0 +1,17 @@
+.user-layout {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.user-layout__content {
+    flex: 1;
+}
+
+/* Leave room at the bottom on mobile so content doesn't sit under the
+   fixed bottom tab bar (see Navbar.css @media max-width: 576px) */
+@media (max-width: 576px) {
+    .user-layout__content {
+        padding-bottom: 72px;
+    }
+}

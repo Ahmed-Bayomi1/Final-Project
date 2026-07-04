@@ -1,0 +1,313 @@
+.profile-user {
+    min-height: 100vh;
+    background: linear-gradient(160deg, #f4f7ff 0%, #ffffff 55%, #f0fbf6 100%);
+    padding: 32px 24px 60px;
+}
+
+.profile-user__container {
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+/* ===== Header card ===== */
+
+.profile-user__header-card {
+    background: #ffffff;
+    border: 1px solid #e5e9f2;
+    border-radius: 20px;
+    padding: 28px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
+    margin-bottom: 32px;
+}
+
+.profile-user__identity {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    min-width: 0;
+}
+
+.profile-user__avatar {
+    flex-shrink: 0;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: #2f5bff;
+    color: #ffffff;
+    font-weight: 800;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.profile-user__identity-text {
+    min-width: 0;
+}
+
+.profile-user__name {
+    margin: 0 0 4px;
+    font-size: 20px;
+    font-weight: 800;
+    color: #0f172a;
+}
+
+.profile-user__contact {
+    margin: 0 0 4px;
+    font-size: 14px;
+    color: #64748b;
+}
+
+.profile-user__nid {
+    margin: 0;
+    font-size: 13px;
+    color: #94a3b8;
+}
+
+.profile-user__edit-button {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #eef2ff;
+    color: #2f5bff;
+    border: none;
+    border-radius: 12px;
+    padding: 10px 18px;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+    white-space: nowrap;
+}
+
+.profile-user__edit-button:hover {
+    background: #dfe6ff;
+}
+
+/* ===== Section title ===== */
+
+.profile-user__section-title {
+    margin: 0 0 16px;
+    font-size: 20px;
+    font-weight: 800;
+    color: #0f172a;
+}
+
+/* ===== Reservation list ===== */
+
+.profile-user__reservations {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.profile-user__reservation-card {
+    background: #ffffff;
+    border: 1px solid #e5e9f2;
+    border-radius: 18px;
+    padding: 22px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.03);
+}
+
+.profile-user__reservation-main {
+    min-width: 0;
+}
+
+.profile-user__medicine-name {
+    margin: 0 0 10px;
+    font-size: 17px;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.profile-user__reservation-meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.profile-user__pharmacy-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.profile-user__pharmacy-badge--blue {
+    background: #eaf1ff;
+    color: #2f5bff;
+}
+
+.profile-user__pharmacy-badge--green {
+    background: #e7f9f0;
+    color: #12805c;
+}
+
+.profile-user__pharmacy-icon {
+    font-size: 13px;
+}
+
+.profile-user__meta-text {
+    font-size: 13px;
+    color: #94a3b8;
+    white-space: nowrap;
+}
+
+.profile-user__reservation-side {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.profile-user__price {
+    font-weight: 800;
+    font-size: 16px;
+    color: #2f5bff;
+    white-space: nowrap;
+}
+
+.profile-user__status {
+    display: inline-block;
+    padding: 5px 14px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.profile-user__status--pending {
+    background: #fff4e5;
+    color: #b8720a;
+}
+
+.profile-user__status--collected {
+    background: #e7f9f0;
+    color: #12805c;
+}
+
+.profile-user__stars {
+    display: flex;
+    gap: 2px;
+}
+
+.profile-user__star {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 1;
+    color: #cbd5e1;
+    padding: 0;
+}
+
+.profile-user__star:hover {
+    color: #facc15;
+}
+
+/* ============ RESPONSIVE ============ */
+
+/* Tablet */
+@media (max-width: 900px) {
+    .profile-user {
+        padding: 24px 20px 48px;
+    }
+
+    .profile-user__header-card {
+        padding: 22px 24px;
+    }
+
+    .profile-user__reservation-card {
+        padding: 18px 20px;
+    }
+}
+
+/* Small tablet / large phone: header + reservation side stack */
+@media (max-width: 640px) {
+    .profile-user__header-card {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .profile-user__edit-button {
+        align-self: stretch;
+        justify-content: center;
+    }
+
+    .profile-user__reservation-card {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .profile-user__reservation-side {
+        width: 100%;
+        justify-content: space-between;
+    }
+}
+
+/* Phone */
+@media (max-width: 480px) {
+    .profile-user {
+        padding: 20px 14px 40px;
+    }
+
+    .profile-user__header-card {
+        padding: 18px 18px;
+        border-radius: 16px;
+        gap: 14px;
+    }
+
+    .profile-user__identity {
+        gap: 14px;
+    }
+
+    .profile-user__avatar {
+        width: 52px;
+        height: 52px;
+        font-size: 16px;
+    }
+
+    .profile-user__name {
+        font-size: 17px;
+    }
+
+    .profile-user__contact {
+        font-size: 13px;
+    }
+
+    .profile-user__section-title {
+        font-size: 17px;
+    }
+
+    .profile-user__reservation-card {
+        padding: 16px 16px;
+        border-radius: 14px;
+    }
+
+    .profile-user__medicine-name {
+        font-size: 15px;
+    }
+
+    .profile-user__reservation-side {
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .profile-user__star {
+        font-size: 16px;
+    }
+}

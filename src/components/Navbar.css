@@ -1,0 +1,142 @@
+.app-navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 32px;
+    background: #ffffff;
+    border-bottom: 1px solid #e5e9f2;
+    position: sticky;
+    top: 0;
+    z-index: 20;
+}
+
+.app-navbar__brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.app-navbar__logo {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: #2f5bff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.app-navbar__brand-name {
+    font-weight: 800;
+    font-size: 18px;
+    color: #0f172a;
+}
+
+.app-navbar__links {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.app-navbar__item {
+    display: flex;
+}
+
+.app-navbar__link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border-radius: 12px;
+    text-decoration: none;
+    color: #64748b;
+    font-weight: 600;
+    font-size: 14px;
+    transition: color 0.15s ease, background 0.15s ease;
+}
+
+.app-navbar__link:hover {
+    background: #f8fafc;
+    color: #0f172a;
+}
+
+.app-navbar__link--active {
+    background: #eef2ff;
+    color: #2f5bff;
+}
+
+.app-navbar__icon {
+    font-size: 16px;
+    line-height: 1;
+}
+
+.app-navbar__label {
+    white-space: nowrap;
+}
+
+/* ============ RESPONSIVE ============ */
+
+/* Tablet: tighten spacing, keep labels */
+@media (max-width: 768px) {
+    .app-navbar {
+        padding: 12px 16px;
+    }
+
+    .app-navbar__brand-name {
+        font-size: 16px;
+    }
+
+    .app-navbar__link {
+        padding: 8px 10px;
+        font-size: 13px;
+    }
+}
+
+/* Phone: convert into a fixed bottom tab bar; hide brand name to save space,
+   labels shrink under icons instead of sitting beside them. */
+@media (max-width: 576px) {
+    .app-navbar {
+        position: fixed;
+        top: auto;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding: 6px 4px;
+        border-top: 1px solid #e5e9f2;
+        border-bottom: none;
+        box-shadow: 0 -4px 16px rgba(15, 23, 42, 0.06);
+    }
+
+    .app-navbar__brand {
+        display: none;
+    }
+
+    .app-navbar__links {
+        width: 100%;
+        justify-content: space-around;
+    }
+
+    .app-navbar__item {
+        flex: 1;
+    }
+
+    .app-navbar__link {
+        flex-direction: column;
+        gap: 2px;
+        padding: 6px 4px;
+        border-radius: 10px;
+        width: 100%;
+        text-align: center;
+    }
+
+    .app-navbar__icon {
+        font-size: 20px;
+    }
+
+    .app-navbar__label {
+        font-size: 10.5px;
+    }
+}

@@ -1,0 +1,398 @@
+.search-user {
+    min-height: 100vh;
+    background: linear-gradient(160deg, #f4f7ff 0%, #ffffff 55%, #f0fbf6 100%);
+    padding: 32px 24px 60px;
+}
+
+.search-user__container {
+    max-width: 1300px;
+    margin: 0 auto;
+}
+
+/* ===== Header ===== */
+
+.search-user__header {
+    margin-bottom: 24px;
+}
+
+.search-user__title {
+    margin: 0 0 4px;
+    font-size: 26px;
+    font-weight: 800;
+    color: #0f172a;
+}
+
+.search-user__subtitle {
+    margin: 0;
+    font-size: 14px;
+    color: #94a3b8;
+}
+
+/* ===== Search + availability controls ===== */
+
+.search-user__controls {
+    display: flex;
+    gap: 14px;
+    margin-bottom: 20px;
+}
+
+.search-user__search-box {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #ffffff;
+    border: 1px solid #e5e9f2;
+    border-radius: 14px;
+    padding: 14px 18px;
+    min-width: 0;
+}
+
+.search-user__search-icon {
+    color: #2f5bff;
+    font-size: 15px;
+    flex-shrink: 0;
+}
+
+.search-user__search-input {
+    flex: 1;
+    min-width: 0;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: 15px;
+    color: #0f172a;
+}
+
+.search-user__search-input::placeholder {
+    color: #94a3b8;
+}
+
+.search-user__availability-select {
+    flex-shrink: 0;
+    border: 1px solid #e5e9f2;
+    border-radius: 14px;
+    background: #ffffff;
+    padding: 14px 16px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #0f172a;
+    cursor: pointer;
+    min-width: 170px;
+}
+
+/* ===== Category pills ===== */
+
+.search-user__categories {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 24px;
+}
+
+.search-user__category-pill {
+    border: 1px solid #e5e9f2;
+    background: #ffffff;
+    color: #475569;
+    font-weight: 600;
+    font-size: 14px;
+    padding: 10px 18px;
+    border-radius: 12px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.search-user__category-pill:hover {
+    border-color: #2f5bff;
+}
+
+.search-user__category-pill--active {
+    background: #2f5bff;
+    border-color: #2f5bff;
+    color: #ffffff;
+}
+
+/* ===== Table card ===== */
+
+.search-user__table-card {
+    background: #ffffff;
+    border: 1px solid #e5e9f2;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.03);
+}
+
+.search-user__table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.search-user__table thead th {
+    text-align: left;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: #64748b;
+    text-transform: uppercase;
+    padding: 18px 20px;
+    background: #f8fafc;
+    border-bottom: 1px solid #e5e9f2;
+    white-space: nowrap;
+}
+
+.search-user__row td {
+    padding: 18px 20px;
+    border-bottom: 1px solid #f1f5f9;
+    vertical-align: middle;
+}
+
+.search-user__row:last-child td {
+    border-bottom: none;
+}
+
+.search-user__medicine-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.search-user__medicine-name {
+    font-weight: 700;
+    font-size: 15px;
+    color: #0f172a;
+    white-space: nowrap;
+}
+
+.search-user__medicine-desc {
+    font-size: 12.5px;
+    color: #94a3b8;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 220px;
+}
+
+.search-user__category-badge {
+    display: inline-block;
+    background: #eaf1ff;
+    color: #2f5bff;
+    font-weight: 700;
+    font-size: 13px;
+    padding: 4px 12px;
+    border-radius: 999px;
+    white-space: nowrap;
+}
+
+.search-user__pharmacy-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.search-user__pharmacy-badge--blue {
+    background: #eaf1ff;
+    color: #2f5bff;
+}
+
+.search-user__pharmacy-badge--green {
+    background: #e7f9f0;
+    color: #12805c;
+}
+
+.search-user__pharmacy-icon {
+    font-size: 13px;
+}
+
+.search-user__price {
+    font-weight: 800;
+    font-size: 15px;
+    color: #2f5bff;
+    white-space: nowrap;
+}
+
+.search-user__stock {
+    font-weight: 700;
+    font-size: 14px;
+    color: #12805c;
+}
+
+.search-user__stock--zero {
+    color: #dc2626;
+}
+
+.search-user__status {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 12px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.search-user__status--in-stock {
+    background: #e7f9f0;
+    color: #12805c;
+}
+
+.search-user__status--out-of-stock {
+    background: #fdeaea;
+    color: #dc2626;
+}
+
+.search-user__reserve-button {
+    border: none;
+    background: #2f5bff;
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 14px;
+    padding: 10px 20px;
+    border-radius: 12px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.15s ease;
+}
+
+.search-user__reserve-button:hover {
+    background: #2447d6;
+}
+
+.search-user__unavailable-button {
+    border: 1px solid #e5e9f2;
+    background: #f8fafc;
+    color: #94a3b8;
+    font-weight: 700;
+    font-size: 14px;
+    padding: 10px 20px;
+    border-radius: 12px;
+    white-space: nowrap;
+    cursor: not-allowed;
+}
+
+.search-user__empty {
+    padding: 40px 20px;
+    text-align: center;
+    color: #94a3b8;
+    font-size: 14px;
+}
+
+/* ============ RESPONSIVE ============ */
+
+/* Tablet */
+@media (max-width: 1024px) {
+    .search-user {
+        padding: 24px 20px 48px;
+    }
+
+    .search-user__medicine-desc {
+        max-width: 160px;
+    }
+}
+
+/* Small tablet: search + select stack */
+@media (max-width: 720px) {
+    .search-user__controls {
+        flex-direction: column;
+    }
+
+    .search-user__availability-select {
+        width: 100%;
+    }
+}
+
+/* Phone: table becomes a stacked card list */
+@media (max-width: 640px) {
+    .search-user {
+        padding: 20px 14px 40px;
+    }
+
+    .search-user__title {
+        font-size: 22px;
+    }
+
+    .search-user__categories {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding-bottom: 4px;
+        margin-left: -14px;
+        margin-right: -14px;
+        padding-left: 14px;
+        padding-right: 14px;
+    }
+
+    .search-user__categories::-webkit-scrollbar {
+        display: none;
+    }
+
+    .search-user__table-card {
+        background: transparent;
+        border: none;
+        box-shadow: none;
+        overflow: visible;
+    }
+
+    .search-user__table,
+    .search-user__table thead,
+    .search-user__table tbody,
+    .search-user__table th,
+    .search-user__table td,
+    .search-user__table tr {
+        display: block;
+    }
+
+    .search-user__table thead {
+        display: none;
+    }
+
+    .search-user__row {
+        background: #ffffff;
+        border: 1px solid #e5e9f2;
+        border-radius: 16px;
+        padding: 16px 18px;
+        margin-bottom: 14px;
+        box-shadow: 0 6px 16px rgba(15, 23, 42, 0.03);
+    }
+
+    .search-user__row td {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 8px 0;
+        border-bottom: none;
+        text-align: right;
+    }
+
+    .search-user__row td::before {
+        content: attr(data-label);
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: #94a3b8;
+        text-align: left;
+        flex-shrink: 0;
+    }
+
+    .search-user__medicine-cell {
+        align-items: flex-end;
+        text-align: right;
+    }
+
+    .search-user__medicine-desc {
+        max-width: 100%;
+        white-space: normal;
+    }
+
+    .search-user__reserve-button,
+    .search-user__unavailable-button {
+        width: 100%;
+    }
+}

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { PATHS } from "../Routes/pathes";
+import 'bootstrap/dist/css/bootstrap.min.css';
 import './LandingPage.css';
 
 function AuthModalContent({ role, onClose, hideSignUp = false }) {
@@ -10,8 +11,11 @@ function AuthModalContent({ role, onClose, hideSignUp = false }) {
     const shouldShowSignUp = !hideSignUp;
 
     return (
-        <div className="landing-page__modal-overlay" onClick={onClose}>
-            <div className="landing-page__modal" onClick={(event) => event.stopPropagation()}>
+        <div className="landing-page__modal-overlay d-flex align-items-center justify-content-center p-3" onClick={onClose}>
+            <div
+                className="landing-page__modal col-12 col-sm-10 col-md-8 col-lg-5 col-xl-4 mx-auto"
+                onClick={(event) => event.stopPropagation()}
+            >
                 <button
                     type="button"
                     className="landing-page__modal-close"
@@ -32,27 +36,27 @@ function AuthModalContent({ role, onClose, hideSignUp = false }) {
                 </p>
 
                 {shouldShowSignUp ? (
-                    <div className="landing-page__auth-tabs">
+                    <div className="landing-page__auth-tabs d-flex flex-row">
                         <button
                             type="button"
-                            className={`landing-page__auth-tab ${activeTab === 'sign-in' ? 'landing-page__auth-tab--active' : ''}`}
+                            className={`landing-page__auth-tab flex-fill ${activeTab === 'sign-in' ? 'landing-page__auth-tab--active' : ''}`}
                             onClick={() => setActiveTab('sign-in')}
                         >
                             Sign In
                         </button>
                         <button
                             type="button"
-                            className={`landing-page__auth-tab ${activeTab === 'sign-up' ? 'landing-page__auth-tab--active' : ''}`}
+                            className={`landing-page__auth-tab flex-fill ${activeTab === 'sign-up' ? 'landing-page__auth-tab--active' : ''}`}
                             onClick={() => setActiveTab('sign-up')}
                         >
                             Sign Up
                         </button>
                     </div>
                 ) : (
-                    <div className="landing-page__auth-tabs">
+                    <div className="landing-page__auth-tabs d-flex flex-row">
                         <button
                             type="button"
-                            className="landing-page__auth-tab landing-page__auth-tab--active"
+                            className="landing-page__auth-tab landing-page__auth-tab--active flex-fill"
                         >
                             Sign In
                         </button>
@@ -61,93 +65,93 @@ function AuthModalContent({ role, onClose, hideSignUp = false }) {
 
                 {activeTab === 'sign-in' ? (
                     <div className="landing-page__auth-panel">
-                        <div className="landing-page__field">
+                        <div className="landing-page__field d-flex align-items-center w-100">
                             <span className="landing-page__field-icon">📧</span>
                             <input
                                 type="email"
                                 placeholder="your.email@example.com"
                                 aria-label="Email"
-                                className="landing-page__input"
+                                className="landing-page__input w-100"
                             />
                         </div>
 
-                        <div className="landing-page__field">
+                        <div className="landing-page__field d-flex align-items-center w-100">
                             <span className="landing-page__field-icon">🔒</span>
                             <input
                                 type="password"
                                 placeholder="Password"
                                 aria-label="Password"
-                                className="landing-page__input"
+                                className="landing-page__input w-100"
                             />
                         </div>
 
-                        <button type="button" className="landing-page__action-button">
+                        <button type="button" className="landing-page__action-button w-100">
                             {isAdmin ? 'Sign In to Admin Panel' : isPharmacy ? 'Sign In to Dashboard' : 'Sign In'}
                         </button>
                     </div>
                 ) : (
                     <div className="landing-page__auth-panel">
-                        <div className="landing-page__field">
+                        <div className="landing-page__field d-flex align-items-center w-100">
                             <span className="landing-page__field-icon">👤</span>
                             <input
                                 type="text"
                                 placeholder={isPharmacy ? 'Pharmacy Manager Name' : 'Sara Ahmed'}
                                 aria-label="Full Name"
-                                className="landing-page__input"
+                                className="landing-page__input w-100"
                             />
                         </div>
 
-                        <div className="landing-page__field">
+                        <div className="landing-page__field d-flex align-items-center w-100">
                             <span className="landing-page__field-icon">#</span>
                             <input
                                 type="text"
                                 placeholder={isPharmacy ? 'Pharmacy Registration Number' : '29801234567890'}
                                 aria-label="National ID"
-                                className="landing-page__input"
+                                className="landing-page__input w-100"
                             />
                         </div>
 
-                        <div className="landing-page__field">
+                        <div className="landing-page__field d-flex align-items-center w-100">
                             <span className="landing-page__field-icon">📞</span>
                             <input
                                 type="tel"
                                 placeholder="010 xxxx xxxx"
                                 aria-label="Phone Number"
-                                className="landing-page__input"
+                                className="landing-page__input w-100"
                             />
                         </div>
 
-                        <div className="landing-page__field">
+                        <div className="landing-page__field d-flex align-items-center w-100">
                             <span className="landing-page__field-icon">📅</span>
                             <input
                                 type="date"
                                 placeholder="Date of Birth"
                                 aria-label="Date of Birth"
-                                className="landing-page__input"
+                                className="landing-page__input w-100"
                             />
                         </div>
 
-                        <div className="landing-page__field">
+                        <div className="landing-page__field d-flex align-items-center w-100">
                             <span className="landing-page__field-icon">📍</span>
                             <input
                                 type="text"
                                 placeholder={isPharmacy ? 'Pharmacy Address' : '12 El-Nasr St, Cairo'}
                                 aria-label="Address"
-                                className="landing-page__input"
+                                className="landing-page__input w-100"
                             />
                         </div>
 
-                        <div className="landing-page__field">
+                        <div className="landing-page__field d-flex align-items-center w-100">
                             <span className="landing-page__field-icon">🔒</span>
                             <input
                                 type="password"
                                 placeholder="Password"
                                 aria-label="Password"
-                                className="landing-page__input"
+                                className="landing-page__input w-100"
                             />
                         </div>
 
-                        <button type="button" className="landing-page__action-button">
+                        <button type="button" className="landing-page__action-button w-100">
                             {isPharmacy ? 'Create Pharmacy Account' : 'Create Account'}
                         </button>
                     </div>
@@ -198,58 +202,60 @@ const PORTALS = [
 
     return (
         <div className="landing-page">
-        <header className="landing-page__header">
-            <div className="landing-page__brand">
+        <header className="landing-page__header d-flex align-items-center px-3 px-md-5 py-3">
+            <div className="landing-page__brand d-flex align-items-center">
             <span className="landing-page__logo">💊</span>
             <span className="landing-page__brand-name">PharmaCare</span>
             </div>
         </header>
 
-        <main className="landing-page__hero">
-            <span className="landing-page__pill">Multi-Pharmacy Inventory & Reservation Platform</span>
+        <main className="landing-page__hero container-fluid text-center px-3 px-md-5 py-4 py-md-5">
+            <span className="landing-page__pill d-inline-block">Multi-Pharmacy Inventory & Reservation Platform</span>
             <h1 className="landing-page__heading">
             Find, Compare & <span className="landing-page__heading-accent">Reserve Medicines</span>
             </h1>
-            <p className="landing-page__subtext">
+            <p className="landing-page__subtext mx-auto col-12 col-md-9 col-lg-7">
             A unified platform connecting patients with pharmacies — search availability, compare
             prices, reserve instantly.
             </p>
 
-            <div className="landing-page__portals">
+            <div className="landing-page__portals row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-3 g-md-4 justify-content-center mx-0">
             {PORTALS.map((portal) => {
                 if (portal.title === 'User Portal' || portal.title === 'Pharmacy Dashboard' || portal.title === 'Admin Panel') {
                 const isPharmacy = portal.title === 'Pharmacy Dashboard';
                 const isAdmin = portal.title === 'Admin Panel';
                 return (
-                    <button
-                    key={portal.title}
-                    type="button"
-                    onClick={() => openUserModal(isAdmin ? 'admin' : isPharmacy ? 'pharmacy' : 'user')}
-                    className="landing-page__portal-card landing-page__portal-button"
-                    >
-                    <span className="landing-page__portal-icon">{portal.icon}</span>
-                    <span className="landing-page__portal-title">
-                        {portal.title} <span className="landing-page__portal-arrow">›</span>
-                    </span>
-                    <span className="landing-page__portal-description">{portal.description}</span>
-                    </button>
+                    <div key={portal.title} className="col d-flex">
+                        <button
+                        type="button"
+                        onClick={() => openUserModal(isAdmin ? 'admin' : isPharmacy ? 'pharmacy' : 'user')}
+                        className="landing-page__portal-card landing-page__portal-button w-100 h-100"
+                        >
+                        <span className="landing-page__portal-icon">{portal.icon}</span>
+                        <span className="landing-page__portal-title">
+                            {portal.title} <span className="landing-page__portal-arrow">›</span>
+                        </span>
+                        <span className="landing-page__portal-description">{portal.description}</span>
+                        </button>
+                    </div>
                 );
                 }
 
                 return (
-                <Link key={portal.title} to={portal.to} className="landing-page__portal-card">
-                    <span className="landing-page__portal-icon">{portal.icon}</span>
-                    <span className="landing-page__portal-title">
-                    {portal.title} <span className="landing-page__portal-arrow">›</span>
-                    </span>
-                    <span className="landing-page__portal-description">{portal.description}</span>
-                </Link>
+                    <div key={portal.title} className="col d-flex">
+                        <Link to={portal.to} className="landing-page__portal-card w-100 h-100">
+                            <span className="landing-page__portal-icon">{portal.icon}</span>
+                            <span className="landing-page__portal-title">
+                            {portal.title} <span className="landing-page__portal-arrow">›</span>
+                            </span>
+                            <span className="landing-page__portal-description">{portal.description}</span>
+                        </Link>
+                    </div>
                 );
             })}
             </div>
-            
 
-           
+
 
             {isUserModalOpen && (
                 <AuthModalContent
@@ -260,7 +266,7 @@ const PORTALS = [
             )}
         </main>
 
-        <footer className="landing-page__footer">© 2026 PharmaCare Platform · All rights reserved</footer>
+        <footer className="landing-page__footer text-center px-3 py-3">© 2026 PharmaCare Platform · All rights reserved</footer>
         </div>
     );
     }
