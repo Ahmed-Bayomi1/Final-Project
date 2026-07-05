@@ -1,0 +1,375 @@
+    /* Scoped entirely to .inventory — no global selectors or :root vars. */
+
+    .inventory {
+    background-color: #eef2fc;
+    min-height: 100vh;
+    padding: 2rem 2.5rem;
+    }
+
+    /* ---------- Header ---------- */
+
+    .inventory__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    }
+
+    .inventory__title {
+    font-size: 1.9rem;
+    font-weight: 700;
+    color: #1a1f36;
+    margin: 0 0 0.25rem;
+    }
+
+    .inventory__subtitle {
+    font-size: 0.95rem;
+    color: #6b7690;
+    margin: 0;
+    }
+
+    .inventory__add-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: #2f5bff;
+    color: #ffffff;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 0.92rem;
+    padding: 0.7rem 1.25rem;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background-color 0.2s ease;
+    }
+
+    .inventory__add-btn:hover {
+    background-color: #2249e0;
+    }
+
+    .inventory__add-btn svg {
+    width: 16px;
+    height: 16px;
+    }
+
+    /* ---------- Panel ---------- */
+
+    .inventory__panel {
+    background-color: #ffffff;
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 6px rgba(20, 30, 70, 0.06);
+    }
+
+    /* Search */
+
+    .inventory__search-wrap {
+    position: relative;
+    margin-bottom: 1.25rem;
+    }
+
+    .inventory__search-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #8892ab;
+    display: flex;
+    }
+
+    .inventory__search-icon svg {
+    width: 18px;
+    height: 18px;
+    }
+
+    .inventory__search-input {
+    width: 100%;
+    padding: 0.75rem 1rem 0.75rem 2.7rem;
+    border: 1px solid #e1e6f5;
+    border-radius: 10px;
+    background-color: #f7f9fd;
+    font-size: 0.92rem;
+    color: #1a1f36;
+    box-sizing: border-box;
+    }
+
+    .inventory__search-input:focus {
+    outline: none;
+    border-color: #2f5bff;
+    background-color: #ffffff;
+    }
+
+    .inventory__search-input::placeholder {
+    color: #9aa4bf;
+    }
+
+    /* ---------- Table (desktop / tablet) ---------- */
+
+    .inventory__table-wrap {
+    overflow-x: auto;
+    }
+
+    .inventory__table {
+    width: 100%;
+    border-collapse: collapse;
+    }
+
+    .inventory__table thead th {
+    text-align: left;
+    font-size: 0.76rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #6b7690;
+    padding: 0.75rem 0.75rem;
+    border-bottom: 1px solid #eef1f8;
+    white-space: nowrap;
+    }
+
+    .inventory__table tbody td {
+    padding: 1rem 0.75rem;
+    border-bottom: 1px solid #eef1f8;
+    vertical-align: middle;
+    }
+
+    .inventory__table tbody tr:last-child td {
+    border-bottom: none;
+    }
+
+    .inventory__med-name {
+    font-weight: 600;
+    color: #1a1f36;
+    font-size: 0.92rem;
+    }
+
+    .inventory__med-desc {
+    color: #8892ab;
+    font-size: 0.8rem;
+    margin-top: 0.15rem;
+    }
+
+    .inventory__category {
+    color: #6b7690;
+    font-size: 0.9rem;
+    }
+
+    .inventory__price {
+    color: #2f5bff;
+    font-weight: 600;
+    font-size: 0.9rem;
+    }
+
+    .inventory__quantity {
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: #1a1f36;
+    }
+
+    .inventory__quantity--out-of-stock {
+    color: #e5484d;
+    }
+
+    .inventory__quantity--low-stock {
+    color: #d97706;
+    }
+
+    .inventory__updated {
+    color: #8892ab;
+    font-size: 0.85rem;
+    white-space: nowrap;
+    }
+
+    /* Status pill */
+
+    .inventory__status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 0.3rem 0.75rem;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    white-space: nowrap;
+    }
+
+    .inventory__status svg {
+    width: 13px;
+    height: 13px;
+    }
+
+    .inventory__status--in-stock {
+    background-color: rgba(18, 128, 92, 0.1);
+    color: #12805c;
+    border-color: rgba(18, 128, 92, 0.25);
+    }
+
+    .inventory__status--low-stock {
+    background-color: rgba(217, 119, 6, 0.12);
+    color: #b5760a;
+    border-color: rgba(217, 119, 6, 0.25);
+    }
+
+    .inventory__status--out-of-stock {
+    background-color: rgba(229, 72, 77, 0.1);
+    color: #cc3338;
+    border-color: rgba(229, 72, 77, 0.25);
+    }
+
+    /* Actions */
+
+    .inventory__actions {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    }
+
+    .inventory__action-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.35rem;
+    border-radius: 6px;
+    transition: background-color 0.2s ease;
+    }
+
+    .inventory__action-btn svg {
+    width: 16px;
+    height: 16px;
+    }
+
+    .inventory__action-btn--edit {
+    color: #2f5bff;
+    }
+
+    .inventory__action-btn--edit:hover {
+    background-color: rgba(47, 91, 255, 0.1);
+    }
+
+    .inventory__action-btn--delete {
+    color: #e5484d;
+    }
+
+    .inventory__action-btn--delete:hover {
+    background-color: rgba(229, 72, 77, 0.1);
+    }
+
+    .inventory__empty {
+    text-align: center;
+    color: #8892ab;
+    padding: 2rem 0 0.5rem;
+    font-size: 0.92rem;
+    }
+
+    /* ---------- Mobile cards (hidden by default, shown under breakpoint) ---------- */
+
+    .inventory__cards {
+    display: none;
+    }
+
+    .inventory__card {
+    border: 1px solid #eef1f8;
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 0.9rem;
+    }
+
+    .inventory__card:last-child {
+    margin-bottom: 0;
+    }
+
+    .inventory__card-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-bottom: 0.85rem;
+    }
+
+    .inventory__card-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+    margin-bottom: 0.9rem;
+    }
+
+    .inventory__card-grid > div {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    }
+
+    .inventory__card-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: #a3accf;
+    }
+
+    .inventory__actions--card {
+    display: flex;
+    gap: 0.6rem;
+    border-top: 1px solid #eef1f8;
+    padding-top: 0.75rem;
+    }
+
+    .inventory__actions--card .inventory__action-btn {
+    flex: 1;
+    border: 1px solid #e1e6f5;
+    padding: 0.5rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    }
+
+    /* ---------- Responsive breakpoints ---------- */
+
+    @media (max-width: 992px) {
+    .inventory {
+        padding: 1.75rem;
+    }
+    }
+
+    /* Below this width, swap table for stacked cards */
+    @media (max-width: 768px) {
+    .inventory__header {
+        flex-direction: column;
+    }
+
+    .inventory__add-btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .inventory__panel {
+        padding: 1.1rem;
+    }
+
+    .inventory__table-wrap {
+        display: none;
+    }
+
+    .inventory__cards {
+        display: block;
+    }
+    }
+
+    @media (max-width: 480px) {
+    .inventory {
+        padding: 1.1rem;
+    }
+
+    .inventory__title {
+        font-size: 1.5rem;
+    }
+
+    .inventory__card-grid {
+        grid-template-columns: 1fr;
+    }
+    }

@@ -1,0 +1,375 @@
+    /* Scoped entirely to .pharmacy-reservation — no global selectors or :root vars. */
+
+    .pharmacy-reservation {
+    background-color: #eef2fc;
+    min-height: 100vh;
+    padding: 2rem 2.5rem;
+    }
+
+    /* ---------- Header ---------- */
+
+    .pharmacy-reservation__header {
+    margin-bottom: 1.5rem;
+    }
+
+    .pharmacy-reservation__title {
+    font-size: 1.9rem;
+    font-weight: 700;
+    color: #1a1f36;
+    margin: 0 0 0.25rem;
+    }
+
+    .pharmacy-reservation__subtitle {
+    font-size: 0.95rem;
+    color: #6b7690;
+    margin: 0;
+    }
+
+    /* ---------- Stat cards ---------- */
+
+    .pharmacy-reservation__stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+    margin-bottom: 1.5rem;
+    }
+
+    .pharmacy-reservation__stat-card {
+    background-color: #ffffff;
+    border-radius: 14px;
+    padding: 1.25rem 1.4rem;
+    box-shadow: 0 2px 6px rgba(20, 30, 70, 0.06);
+    }
+
+    .pharmacy-reservation__stat-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+    }
+
+    .pharmacy-reservation__stat-label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #6b7690;
+    }
+
+    .pharmacy-reservation__stat-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    }
+
+    .pharmacy-reservation__stat-icon svg {
+    width: 18px;
+    height: 18px;
+    }
+
+    .pharmacy-reservation__stat-icon--amber {
+    background-color: rgba(217, 119, 6, 0.14);
+    color: #d97706;
+    }
+
+    .pharmacy-reservation__stat-icon--blue {
+    background-color: rgba(47, 91, 255, 0.12);
+    color: #2f5bff;
+    }
+
+    .pharmacy-reservation__stat-icon--green {
+    background-color: rgba(18, 128, 92, 0.12);
+    color: #12805c;
+    }
+
+    .pharmacy-reservation__stat-value {
+    font-size: 1.9rem;
+    font-weight: 700;
+    color: #1a1f36;
+    line-height: 1;
+    }
+
+    /* ---------- Panel ---------- */
+
+    .pharmacy-reservation__panel {
+    background-color: #ffffff;
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 6px rgba(20, 30, 70, 0.06);
+    }
+
+    /* Search */
+
+    .pharmacy-reservation__search-wrap {
+    position: relative;
+    margin-bottom: 1.25rem;
+    }
+
+    .pharmacy-reservation__search-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #8892ab;
+    display: flex;
+    }
+
+    .pharmacy-reservation__search-icon svg {
+    width: 18px;
+    height: 18px;
+    }
+
+    .pharmacy-reservation__search-input {
+    width: 100%;
+    padding: 0.75rem 1rem 0.75rem 2.7rem;
+    border: 1px solid #e1e6f5;
+    border-radius: 10px;
+    background-color: #f7f9fd;
+    font-size: 0.92rem;
+    color: #1a1f36;
+    box-sizing: border-box;
+    }
+
+    .pharmacy-reservation__search-input:focus {
+    outline: none;
+    border-color: #2f5bff;
+    background-color: #ffffff;
+    }
+
+    .pharmacy-reservation__search-input::placeholder {
+    color: #9aa4bf;
+    }
+
+    /* ---------- Table (desktop / tablet) ---------- */
+
+    .pharmacy-reservation__table-wrap {
+    overflow-x: auto;
+    }
+
+    .pharmacy-reservation__table {
+    width: 100%;
+    border-collapse: collapse;
+    }
+
+    .pharmacy-reservation__table thead th {
+    text-align: left;
+    font-size: 0.76rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #6b7690;
+    padding: 0.75rem;
+    border-bottom: 1px solid #eef1f8;
+    white-space: nowrap;
+    }
+
+    .pharmacy-reservation__table tbody td {
+    padding: 1rem 0.75rem;
+    border-bottom: 1px solid #eef1f8;
+    vertical-align: middle;
+    white-space: nowrap;
+    }
+
+    .pharmacy-reservation__table tbody tr:last-child td {
+    border-bottom: none;
+    }
+
+    .pharmacy-reservation__code {
+    color: #2f5bff;
+    font-weight: 700;
+    font-size: 0.9rem;
+    }
+
+    .pharmacy-reservation__medicine {
+    color: #1a1f36;
+    font-weight: 600;
+    font-size: 0.92rem;
+    }
+
+    .pharmacy-reservation__patient {
+    color: #1a1f36;
+    font-size: 0.9rem;
+    }
+
+    .pharmacy-reservation__phone,
+    .pharmacy-reservation__date {
+    color: #8892ab;
+    font-size: 0.88rem;
+    }
+
+    .pharmacy-reservation__price {
+    color: #2f5bff;
+    font-weight: 700;
+    font-size: 0.9rem;
+    }
+
+    /* Status pill */
+
+    .pharmacy-reservation__status {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 0.3rem 0.75rem;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    white-space: nowrap;
+    }
+
+    .pharmacy-reservation__status--pending {
+    background-color: rgba(217, 119, 6, 0.12);
+    color: #b5760a;
+    border-color: rgba(217, 119, 6, 0.25);
+    }
+
+    .pharmacy-reservation__status--ready {
+    background-color: rgba(47, 91, 255, 0.1);
+    color: #2f5bff;
+    border-color: rgba(47, 91, 255, 0.25);
+    }
+
+    .pharmacy-reservation__status--collected {
+    background-color: rgba(18, 128, 92, 0.1);
+    color: #12805c;
+    border-color: rgba(18, 128, 92, 0.25);
+    }
+
+    /* Action button */
+
+    .pharmacy-reservation__action-btn {
+    background-color: rgba(47, 91, 255, 0.1);
+    color: #2f5bff;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    padding: 0.5rem 0.9rem;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background-color 0.2s ease;
+    }
+
+    .pharmacy-reservation__action-btn:hover {
+    background-color: rgba(47, 91, 255, 0.18);
+    }
+
+    .pharmacy-reservation__action-btn--full {
+    width: 100%;
+    text-align: center;
+    padding: 0.65rem;
+    }
+
+    .pharmacy-reservation__empty {
+    text-align: center;
+    color: #8892ab;
+    padding: 2rem 0 0.5rem;
+    font-size: 0.92rem;
+    }
+
+    /* ---------- Mobile cards (hidden by default, shown under breakpoint) ---------- */
+
+    .pharmacy-reservation__cards {
+    display: none;
+    }
+
+    .pharmacy-reservation__card {
+    border: 1px solid #eef1f8;
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 0.9rem;
+    }
+
+    .pharmacy-reservation__card:last-child {
+    margin-bottom: 0;
+    }
+
+    .pharmacy-reservation__card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+    }
+
+    .pharmacy-reservation__card .pharmacy-reservation__medicine {
+    margin-bottom: 0.75rem;
+    }
+
+    .pharmacy-reservation__card-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+    margin-bottom: 0.9rem;
+    }
+
+    .pharmacy-reservation__card-grid > div {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    font-size: 0.88rem;
+    color: #1a1f36;
+    }
+
+    .pharmacy-reservation__card-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: #a3accf;
+    }
+
+    /* ---------- Responsive breakpoints ---------- */
+
+    @media (max-width: 992px) {
+    .pharmacy-reservation {
+        padding: 1.75rem;
+    }
+    }
+
+    @media (max-width: 768px) {
+    .pharmacy-reservation__stats {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.75rem;
+    }
+
+    .pharmacy-reservation__stat-card {
+        padding: 1rem;
+    }
+
+    .pharmacy-reservation__stat-value {
+        font-size: 1.5rem;
+    }
+
+    .pharmacy-reservation__panel {
+        padding: 1.1rem;
+    }
+
+    /* Swap table for stacked cards */
+    .pharmacy-reservation__table-wrap {
+        display: none;
+    }
+
+    .pharmacy-reservation__cards {
+        display: block;
+    }
+    }
+
+    @media (max-width: 480px) {
+    .pharmacy-reservation {
+        padding: 1.1rem;
+    }
+
+    .pharmacy-reservation__title {
+        font-size: 1.5rem;
+    }
+
+    .pharmacy-reservation__stats {
+        grid-template-columns: 1fr;
+    }
+
+    .pharmacy-reservation__card-grid {
+        grid-template-columns: 1fr;
+    }
+    }

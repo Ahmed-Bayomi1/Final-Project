@@ -1,0 +1,204 @@
+    /* Scoped entirely to .navbar-pharmacy — no global selectors or :root vars,
+    so this can never leak into or be affected by other component styles. */
+
+    .navbar-pharmacy {
+    background-color: #ffffff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    width: 100%;
+    }
+
+    .navbar-pharmacy__container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0.75rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    }
+
+    .navbar-pharmacy__brand {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #2f5bff;
+    text-decoration: none;
+    letter-spacing: -0.02em;
+    }
+
+    /* Hamburger toggle — hidden on desktop */
+    .navbar-pharmacy__toggle {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    width: 32px;
+    height: 32px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    z-index: 101;
+    }
+
+    .navbar-pharmacy__bar {
+    display: block;
+    height: 3px;
+    width: 100%;
+    background-color: #2f5bff;
+    border-radius: 2px;
+    transition: transform 0.25s ease, opacity 0.25s ease;
+    }
+
+    .navbar-pharmacy__toggle--active .navbar-pharmacy__bar:nth-child(1) {
+    transform: translateY(8px) rotate(45deg);
+    }
+
+    .navbar-pharmacy__toggle--active .navbar-pharmacy__bar:nth-child(2) {
+    opacity: 0;
+    }
+
+    .navbar-pharmacy__toggle--active .navbar-pharmacy__bar:nth-child(3) {
+    transform: translateY(-8px) rotate(-45deg);
+    }
+
+    /* Links */
+    .navbar-pharmacy__links {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    }
+
+    .navbar-pharmacy__item {
+    display: flex;
+    }
+
+    .navbar-pharmacy__item--mobile-only {
+    display: none;
+    }
+
+    .navbar-pharmacy__link {
+    display: block;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    color: #333333;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.95rem;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+    .navbar-pharmacy__link:hover {
+    background-color: rgba(47, 91, 255, 0.08);
+    color: #2f5bff;
+    }
+
+    .navbar-pharmacy__link--active {
+    background-color: rgba(18, 128, 92, 0.1);
+    color: #12805c;
+    font-weight: 700;
+    }
+
+    /* Logout button */
+    .navbar-pharmacy__logout {
+    border: 1.5px solid #2f5bff;
+    background-color: transparent;
+    color: #2f5bff;
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: 0.45rem 1.1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+    .navbar-pharmacy__logout:hover {
+    background-color: #2f5bff;
+    color: #ffffff;
+    }
+
+    .navbar-pharmacy__logout--desktop {
+    margin-left: 0.5rem;
+    }
+
+    /* ---------- Responsive breakpoints ---------- */
+
+    /* Tablet */
+    @media (max-width: 992px) {
+    .navbar-pharmacy__container {
+        padding: 0.75rem 1.25rem;
+    }
+
+    .navbar-pharmacy__link {
+        font-size: 0.9rem;
+        padding: 0.5rem 0.75rem;
+    }
+    }
+
+    /* Mobile: collapse into hamburger + slide-down menu */
+    @media (max-width: 768px) {
+    .navbar-pharmacy__toggle {
+        display: flex;
+    }
+
+    .navbar-pharmacy__logout--desktop {
+        display: none;
+    }
+
+    .navbar-pharmacy__links {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        flex-direction: column;
+        align-items: stretch;
+        background-color: #ffffff;
+        box-shadow: 0 8px 12px rgba(0, 0, 0, 0.08);
+        max-height: 0;
+        overflow: hidden;
+        opacity: 0;
+        transition: max-height 0.3s ease, opacity 0.25s ease;
+        gap: 0;
+    }
+
+    .navbar-pharmacy__links--open {
+        max-height: 400px;
+        opacity: 1;
+        padding: 0.5rem 0;
+    }
+
+    .navbar-pharmacy__item {
+        width: 100%;
+    }
+
+    .navbar-pharmacy__item--mobile-only {
+        display: flex;
+        padding: 0.5rem 1.5rem;
+    }
+
+    .navbar-pharmacy__link {
+        width: 100%;
+        padding: 0.85rem 1.5rem;
+        border-radius: 0;
+    }
+
+    .navbar-pharmacy__logout {
+        width: 100%;
+    }
+    }
+
+    /* Small phones */
+    @media (max-width: 480px) {
+    .navbar-pharmacy__brand {
+        font-size: 1.2rem;
+    }
+
+    .navbar-pharmacy__container {
+        padding: 0.6rem 1rem;
+    }
+    }

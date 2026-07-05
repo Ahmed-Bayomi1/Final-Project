@@ -14,6 +14,12 @@ import SearchUser from "../Pages/SearchUser";
 import ReserveUser from "../Pages/ReserveUser";
 import ProfileUser from "../Pages/ProfileUser";
 
+import PharmacyLayout from "../layout/PharmacyLayout";
+import PharmacyDashboard from "../Pages/PharmacyDashboard";
+import Inventory from "../Pages/Inventory";
+import Analytics from "../Pages/Analytics";
+import PharmacyReservation from "../Pages/PharmacyReservation";
+
 import { PATHS } from "./pathes";
 
 export default function AppRoutes() {
@@ -43,6 +49,14 @@ export default function AppRoutes() {
         <Route path="search" element={<SearchUser />} />
         <Route path="reservations" element={<ReserveUser />} />
         <Route path="profile" element={<ProfileUser />} />
+      </Route>
+
+      <Route path="/pharmacy" element={<PharmacyLayout />}>
+        <Route index element={<PharmacyDashboard />} />
+        <Route path="dashboard" element={<PharmacyDashboard />} />
+        <Route path="inventory" element={<Inventory />} />
+        <Route path="analytics" element={<Analytics />} />
+        <Route path="reservations" element={<PharmacyReservation />} />
       </Route>
     </Routes>
   );

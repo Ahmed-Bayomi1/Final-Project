@@ -1,0 +1,332 @@
+    /* Scoped entirely to .pharmacy-dashboard — no global selectors or :root vars. */
+
+    .pharmacy-dashboard {
+    background-color: #eef2fc;
+    min-height: 100vh;
+    padding: 2rem 2.5rem;
+    }
+
+    /* ---------- Header ---------- */
+
+    .pharmacy-dashboard__header {
+    margin-bottom: 1.75rem;
+    }
+
+    .pharmacy-dashboard__title {
+    font-size: 1.9rem;
+    font-weight: 700;
+    color: #1a1f36;
+    margin: 0 0 0.25rem;
+    }
+
+    .pharmacy-dashboard__subtitle {
+    font-size: 0.95rem;
+    color: #6b7690;
+    margin: 0;
+    }
+
+    /* ---------- Stat cards ---------- */
+
+    .pharmacy-dashboard__stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.25rem;
+    margin-bottom: 1.5rem;
+    }
+
+    .pharmacy-dashboard__stat-card {
+    background-color: #ffffff;
+    border-radius: 14px;
+    padding: 1.25rem 1.4rem;
+    box-shadow: 0 2px 6px rgba(20, 30, 70, 0.06);
+    }
+
+    .pharmacy-dashboard__stat-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+    }
+
+    .pharmacy-dashboard__stat-label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #6b7690;
+    }
+
+    .pharmacy-dashboard__stat-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    }
+
+    .pharmacy-dashboard__stat-icon svg {
+    width: 18px;
+    height: 18px;
+    }
+
+    .pharmacy-dashboard__stat-icon--blue {
+    background-color: rgba(47, 91, 255, 0.12);
+    color: #2f5bff;
+    }
+
+    .pharmacy-dashboard__stat-icon--green {
+    background-color: rgba(18, 128, 92, 0.12);
+    color: #12805c;
+    }
+
+    .pharmacy-dashboard__stat-icon--amber {
+    background-color: rgba(217, 119, 6, 0.14);
+    color: #d97706;
+    }
+
+    .pharmacy-dashboard__stat-icon--purple {
+    background-color: rgba(124, 58, 237, 0.12);
+    color: #7c3aed;
+    }
+
+    .pharmacy-dashboard__stat-value {
+    font-size: 1.9rem;
+    font-weight: 700;
+    color: #1a1f36;
+    line-height: 1;
+    }
+
+    .pharmacy-dashboard__stat-sublabel {
+    font-size: 0.8rem;
+    color: #8892ab;
+    margin-top: 0.4rem;
+    }
+
+    /* ---------- Low stock alert ---------- */
+
+    .pharmacy-dashboard__alert {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.9rem;
+    background-color: #fdf3d6;
+    border: 1px solid #f3dfa0;
+    border-radius: 14px;
+    padding: 1.1rem 1.4rem;
+    margin-bottom: 1.5rem;
+    }
+
+    .pharmacy-dashboard__alert-icon {
+    color: #d97706;
+    flex-shrink: 0;
+    margin-top: 0.1rem;
+    }
+
+    .pharmacy-dashboard__alert-icon svg {
+    width: 20px;
+    height: 20px;
+    }
+
+    .pharmacy-dashboard__alert-title {
+    font-weight: 700;
+    color: #92620a;
+    margin: 0 0 0.15rem;
+    font-size: 0.95rem;
+    }
+
+    .pharmacy-dashboard__alert-message {
+    color: #a3760f;
+    margin: 0;
+    font-size: 0.88rem;
+    }
+
+    /* ---------- Panels ---------- */
+
+    .pharmacy-dashboard__panels {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    }
+
+    .pharmacy-dashboard__panel {
+    background-color: #ffffff;
+    border-radius: 14px;
+    padding: 1.5rem 1.6rem;
+    box-shadow: 0 2px 6px rgba(20, 30, 70, 0.06);
+    }
+
+    .pharmacy-dashboard__panel-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #1a1f36;
+    margin: 0 0 1.25rem;
+    }
+
+    /* Inventory bars */
+
+    .pharmacy-dashboard__bars {
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+    }
+
+    .pharmacy-dashboard__bar-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.4rem;
+    font-size: 0.88rem;
+    }
+
+    .pharmacy-dashboard__bar-label {
+    font-weight: 600;
+    color: #1a1f36;
+    }
+
+    .pharmacy-dashboard__bar-count {
+    color: #6b7690;
+    }
+
+    .pharmacy-dashboard__bar-track {
+    width: 100%;
+    height: 8px;
+    border-radius: 4px;
+    background-color: #eef1f8;
+    overflow: hidden;
+    }
+
+    .pharmacy-dashboard__bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    }
+
+    .pharmacy-dashboard__bar-fill--green {
+    background-color: #12805c;
+    }
+
+    .pharmacy-dashboard__bar-fill--amber {
+    background-color: #e0a318;
+    }
+
+    .pharmacy-dashboard__bar-fill--red {
+    background-color: #e5484d;
+    }
+
+    /* Recent reservations */
+
+    .pharmacy-dashboard__reservations {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    }
+
+    .pharmacy-dashboard__reservation {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    padding: 0.85rem 0;
+    border-bottom: 1px solid #eef1f8;
+    }
+
+    .pharmacy-dashboard__reservation:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+    }
+
+    .pharmacy-dashboard__reservation-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    background-color: rgba(47, 91, 255, 0.1);
+    color: #2f5bff;
+    flex-shrink: 0;
+    }
+
+    .pharmacy-dashboard__reservation-icon svg {
+    width: 16px;
+    height: 16px;
+    }
+
+    .pharmacy-dashboard__reservation-info {
+    flex: 1;
+    min-width: 0;
+    }
+
+    .pharmacy-dashboard__reservation-medicine {
+    font-weight: 600;
+    color: #1a1f36;
+    margin: 0 0 0.15rem;
+    font-size: 0.92rem;
+    }
+
+    .pharmacy-dashboard__reservation-meta {
+    color: #8892ab;
+    margin: 0;
+    font-size: 0.82rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    }
+
+    .pharmacy-dashboard__status {
+    flex-shrink: 0;
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 0.3rem 0.75rem;
+    border-radius: 999px;
+    text-transform: capitalize;
+    }
+
+    .pharmacy-dashboard__status--pending {
+    background-color: rgba(217, 119, 6, 0.14);
+    color: #b5760a;
+    }
+
+    .pharmacy-dashboard__status--collected {
+    background-color: rgba(18, 128, 92, 0.12);
+    color: #12805c;
+    }
+
+    /* ---------- Responsive breakpoints ---------- */
+
+    /* Tablet: 2 stat cards per row, panels stack */
+    @media (max-width: 992px) {
+    .pharmacy-dashboard {
+        padding: 1.75rem;
+    }
+
+    .pharmacy-dashboard__stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .pharmacy-dashboard__panels {
+        grid-template-columns: 1fr;
+    }
+    }
+
+    /* Mobile: single column everywhere */
+    @media (max-width: 576px) {
+    .pharmacy-dashboard {
+        padding: 1.25rem;
+    }
+
+    .pharmacy-dashboard__title {
+        font-size: 1.5rem;
+    }
+
+    .pharmacy-dashboard__stats {
+        grid-template-columns: 1fr;
+    }
+
+    .pharmacy-dashboard__panel {
+        padding: 1.25rem;
+    }
+
+    .pharmacy-dashboard__reservation-meta {
+        white-space: normal;
+    }
+    }
