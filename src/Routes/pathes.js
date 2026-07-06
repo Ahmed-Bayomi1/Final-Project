@@ -19,4 +19,8 @@ export const PATHS = {
 
     ADMIN_LOGIN: "/admin/login",
     ADMIN_SIGNUP: "/admin/signup",
+
+    ADMIN_OVERVIEW: "/admin/overview",
+    ADMIN_USERS: "/admin/users",
+    ADMIN_PHARMACIES: "/admin/pharmacies",
 };

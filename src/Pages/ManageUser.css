@@ -1,0 +1,449 @@
+    /* ManageUser.css */
+
+    .manage-user {
+    min-height: 100%;
+    width: 100%;
+    background-color: #f8fafc;
+    padding: 1rem;
+    box-sizing: border-box;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    .manage-user__inner {
+    max-width: 1280px;
+    margin: 0 auto;
+    }
+
+    /* Header */
+    .mu-header {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    }
+
+    .mu-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: #0f172a;
+    margin: 0;
+    }
+
+    .mu-subtitle {
+    margin: 0.25rem 0 0;
+    font-size: 0.875rem;
+    color: #64748b;
+    }
+
+    .mu-header-actions {
+    display: flex;
+    gap: 0.5rem;
+    }
+
+    .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-radius: 0.5rem;
+    padding: 0.55rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .btn-outline {
+    border: 1px solid #e2e8f0;
+    background-color: #ffffff;
+    color: #334155;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+    }
+
+    .btn-outline:hover {
+    background-color: #f8fafc;
+    }
+
+    .btn-outline:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px #ffffff, 0 0 0 4px #6366f1;
+    }
+
+    .icon {
+    width: 1rem;
+    height: 1rem;
+    }
+
+    /* Filter dropdown */
+    .mu-filter-wrap {
+    position: relative;
+    }
+
+    .mu-filter-menu {
+    position: absolute;
+    right: 0;
+    z-index: 10;
+    margin-top: 0.5rem;
+    width: 10rem;
+    border-radius: 0.5rem;
+    border: 1px solid #e2e8f0;
+    background-color: #ffffff;
+    padding: 0.25rem;
+    box-shadow: 0 10px 25px rgba(15, 23, 42, 0.1);
+    }
+
+    .mu-filter-option {
+    display: block;
+    width: 100%;
+    border: none;
+    background: none;
+    border-radius: 0.375rem;
+    padding: 0.5rem 0.75rem;
+    text-align: left;
+    font-size: 0.875rem;
+    text-transform: capitalize;
+    color: #475569;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+    }
+
+    .mu-filter-option:hover {
+    background-color: #f8fafc;
+    }
+
+    .mu-filter-option--active {
+    font-weight: 600;
+    color: #4f46e5;
+    }
+
+    /* Card container */
+    .mu-card {
+    border-radius: 1rem;
+    border: 1px solid #e2e8f0;
+    background-color: #ffffff;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+    overflow: hidden;
+    }
+
+    /* Search */
+    .mu-search-wrap {
+    border-bottom: 1px solid #f1f5f9;
+    padding: 1rem;
+    }
+
+    .mu-search {
+    position: relative;
+    }
+
+    .mu-search-icon {
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 1rem;
+    height: 1rem;
+    color: #94a3b8;
+    pointer-events: none;
+    }
+
+    .mu-search-input {
+    width: 100%;
+    box-sizing: border-box;
+    border-radius: 0.5rem;
+    border: 1px solid #e2e8f0;
+    background-color: #f8fafc;
+    padding: 0.65rem 1rem 0.65rem 2.5rem;
+    font-size: 0.875rem;
+    color: #334155;
+    }
+
+    .mu-search-input::placeholder {
+    color: #94a3b8;
+    }
+
+    .mu-search-input:focus {
+    outline: none;
+    border-color: #a5b4fc;
+    background-color: #ffffff;
+    box-shadow: 0 0 0 3px #e0e7ff;
+    }
+
+    /* Table (desktop / tablet) */
+    .mu-table-wrap {
+    overflow-x: auto;
+    display: block;
+    }
+
+    .mu-table {
+    width: 100%;
+    min-width: 860px;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+    }
+
+    .mu-table thead tr {
+    border-bottom: 1px solid #f1f5f9;
+    text-align: left;
+    }
+
+    .mu-table th {
+    padding: 0.75rem 1.5rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #94a3b8;
+    }
+
+    .mu-table td {
+    padding: 1rem 1.5rem;
+    white-space: nowrap;
+    color: #475569;
+    border-bottom: 1px solid #f8fafc;
+    }
+
+    .mu-table tbody tr:last-child td {
+    border-bottom: none;
+    }
+
+    .mu-table tbody tr:hover {
+    background-color: #f8fafc;
+    }
+
+    .mu-align-right {
+    text-align: right;
+    }
+
+    .mu-mono {
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    font-size: 0.75rem;
+    color: #64748b;
+    }
+
+    .mu-truncate {
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    }
+
+    .mu-reservations {
+    font-weight: 600;
+    color: #1e293b;
+    }
+
+    /* User cell */
+    .mu-user-cell {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    }
+
+    .mu-user-name {
+    font-weight: 500;
+    color: #1e293b;
+    margin: 0;
+    }
+
+    .mu-avatar {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #ffffff;
+    }
+
+    .mu-avatar--lg {
+    width: 2.5rem;
+    height: 2.5rem;
+    }
+
+    .avatar-indigo { background-color: #6366f1; }
+    .avatar-blue { background-color: #3b82f6; }
+    .avatar-violet { background-color: #8b5cf6; }
+    .avatar-sky { background-color: #0ea5e9; }
+
+    /* Status pill */
+    .status-pill {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 9999px;
+    padding: 0.3rem 0.7rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    }
+
+    .status-active {
+    background-color: #ecfdf5;
+    color: #047857;
+    box-shadow: inset 0 0 0 1px #a7f3d0;
+    }
+
+    .status-suspended {
+    background-color: #fff1f2;
+    color: #be123c;
+    box-shadow: inset 0 0 0 1px #fecdd3;
+    }
+
+    /* Actions */
+    .mu-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    }
+
+    .mu-icon-btn {
+    border: none;
+    background: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.15rem;
+    border-radius: 0.25rem;
+    transition: color 0.15s ease;
+    }
+
+    .mu-icon-btn--view {
+    color: #6366f1;
+    }
+    .mu-icon-btn--view:hover {
+    color: #4338ca;
+    }
+
+    .mu-icon-btn--danger {
+    color: #f43f5e;
+    }
+    .mu-icon-btn--danger:hover {
+    color: #be123c;
+    }
+
+    .mu-icon-btn--success {
+    color: #10b981;
+    }
+    .mu-icon-btn--success:hover {
+    color: #047857;
+    }
+
+    .mu-icon-btn:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px #ffffff, 0 0 0 4px #a5b4fc;
+    }
+
+    .mu-empty {
+    padding: 3rem 1.5rem;
+    text-align: center;
+    font-size: 0.875rem;
+    color: #94a3b8;
+    }
+
+    /* Mobile cards (hidden by default, shown below md breakpoint) */
+    .mu-cards {
+    display: none;
+    }
+
+    .mu-mobile-card {
+    padding: 1rem;
+    border-bottom: 1px solid #f1f5f9;
+    }
+
+    .mu-mobile-card:last-child {
+    border-bottom: none;
+    }
+
+    .mu-mobile-card__top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.75rem;
+    }
+
+    .mu-mobile-nid {
+    margin: 0.15rem 0 0;
+    }
+
+    .mu-mobile-grid {
+    margin-top: 0.75rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem 0.75rem;
+    font-size: 0.75rem;
+    color: #64748b;
+    }
+
+    .mu-mobile-field {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    }
+
+    .mu-mobile-field--full {
+    grid-column: 1 / -1;
+    }
+
+    .mu-mobile-field-icon {
+    width: 0.85rem;
+    height: 0.85rem;
+    color: #94a3b8;
+    flex-shrink: 0;
+    }
+
+    .mu-mobile-footer {
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid #f8fafc;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    }
+
+    .mu-mobile-reservations {
+    font-size: 0.75rem;
+    color: #64748b;
+    }
+
+    .mu-empty--mobile {
+    padding: 3rem 1.5rem;
+    }
+
+    /* Responsive breakpoint: switch table -> cards below 768px */
+    @media (max-width: 767px) {
+    .mu-table-wrap {
+        display: none;
+    }
+    .mu-cards {
+        display: block;
+    }
+    }
+
+    @media (min-width: 768px) {
+    .mu-cards {
+        display: none;
+    }
+    }
+
+    @media (min-width: 640px) {
+    .mu-header {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+    }
+    }
+
+    @media (min-width: 640px) {
+    .manage-user {
+        padding: 1.5rem;
+    }
+    }
+
+    @media (min-width: 1024px) {
+    .manage-user {
+        padding: 2rem;
+    }
+    }

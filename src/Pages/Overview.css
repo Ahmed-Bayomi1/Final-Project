@@ -1,0 +1,292 @@
+    .overview {
+    --overview-blue: #2f5bff;
+    --overview-blue-bg: #e8edff;
+    --overview-green: #12805c;
+    --overview-green-bg: #dff3ea;
+    --overview-purple: #6d4fd1;
+    --overview-purple-bg: #ece7fb;
+    --overview-amber: #c8790a;
+    --overview-amber-bg: #fbecd6;
+    --overview-text-dark: #12173a;
+    --overview-text-muted: #6b7290;
+    --overview-border: #e7e9f4;
+
+    padding: 2rem;
+    background: #eef1fb;
+    min-height: 100%;
+    }
+
+    .overview__header {
+    margin-bottom: 1.5rem;
+    }
+
+    .overview__title {
+    margin: 0;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--overview-text-dark);
+    }
+
+    .overview__subtitle {
+    margin: 0.35rem 0 0;
+    font-size: 0.95rem;
+    color: var(--overview-text-muted);
+    }
+
+    /* Stat cards */
+    .overview__stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.25rem;
+    margin-bottom: 1.5rem;
+    }
+
+    .overview__stat-card {
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 1.25rem 1.4rem;
+    box-shadow: 0 4px 14px rgba(30, 41, 90, 0.06);
+    }
+
+    .overview__stat-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 0.85rem;
+    }
+
+    .overview__stat-label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    color: var(--overview-text-muted);
+    }
+
+    .overview__stat-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    flex-shrink: 0;
+    }
+
+    .overview__stat-icon svg {
+    width: 18px;
+    height: 18px;
+    }
+
+    .overview__stat-icon--blue {
+    background: var(--overview-blue-bg);
+    color: var(--overview-blue);
+    }
+
+    .overview__stat-icon--green {
+    background: var(--overview-green-bg);
+    color: var(--overview-green);
+    }
+
+    .overview__stat-icon--purple {
+    background: var(--overview-purple-bg);
+    color: var(--overview-purple);
+    }
+
+    .overview__stat-icon--amber {
+    background: var(--overview-amber-bg);
+    color: var(--overview-amber);
+    }
+
+    .overview__stat-value {
+    font-size: 1.9rem;
+    font-weight: 700;
+    color: var(--overview-text-dark);
+    line-height: 1.1;
+    }
+
+    .overview__stat-trend {
+    margin-top: 0.5rem;
+    font-size: 0.85rem;
+    color: var(--overview-text-muted);
+    }
+
+    .overview__stat-trend--up {
+    color: var(--overview-green);
+    }
+
+    .overview__stat-trend-arrow {
+    margin-right: 0.15rem;
+    }
+
+    /* Panels */
+    .overview__panels {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+    align-items: start;
+    }
+
+    .overview__panel {
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 14px rgba(30, 41, 90, 0.06);
+    }
+
+    .overview__panel-title {
+    margin: 0 0 0.75rem;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--overview-text-dark);
+    }
+
+    /* Recent activity */
+    .overview__activity-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    }
+
+    .overview__activity-item {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    padding: 0.85rem 0;
+    border-bottom: 1px solid var(--overview-border);
+    }
+
+    .overview__activity-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+    }
+
+    .overview__activity-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    }
+
+    .overview__activity-icon svg {
+    width: 16px;
+    height: 16px;
+    }
+
+    .overview__activity-icon--user {
+    background: var(--overview-blue-bg);
+    color: var(--overview-blue);
+    }
+
+    .overview__activity-icon--pharmacy {
+    background: var(--overview-green-bg);
+    color: var(--overview-green);
+    }
+
+    .overview__activity-icon--reservation {
+    background: var(--overview-amber-bg);
+    color: var(--overview-amber);
+    }
+
+    .overview__activity-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    min-width: 0;
+    flex: 1;
+    }
+
+    .overview__activity-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--overview-text-dark);
+    }
+
+    .overview__activity-subtitle {
+    font-size: 0.85rem;
+    color: var(--overview-text-muted);
+    }
+
+    .overview__activity-time {
+    font-size: 0.82rem;
+    color: var(--overview-text-muted);
+    white-space: nowrap;
+    flex-shrink: 0;
+    }
+
+    /* Reservations by category */
+    .overview__category-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    }
+
+    .overview__category-item {
+    padding: 0.65rem 0;
+    }
+
+    .overview__category-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 0.4rem;
+    }
+
+    .overview__category-name {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--overview-text-dark);
+    }
+
+    .overview__category-count {
+    font-size: 0.85rem;
+    color: var(--overview-text-muted);
+    }
+
+    .overview__category-bar {
+    width: 100%;
+    height: 8px;
+    border-radius: 999px;
+    background: var(--overview-border);
+    overflow: hidden;
+    }
+
+    .overview__category-bar-fill {
+    height: 100%;
+    border-radius: 999px;
+    background: var(--overview-blue);
+    transition: width 0.3s ease;
+    }
+
+    /* Responsive */
+    @media (max-width: 1080px) {
+    .overview__stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    }
+
+    @media (max-width: 900px) {
+    .overview__panels {
+        grid-template-columns: 1fr;
+    }
+    }
+
+    @media (max-width: 560px) {
+    .overview {
+        padding: 1.25rem;
+    }
+
+    .overview__stats {
+        grid-template-columns: 1fr;
+    }
+
+    .overview__stat-value {
+        font-size: 1.6rem;
+    }
+
+    .overview__activity-time {
+        display: none;
+    }
+    }

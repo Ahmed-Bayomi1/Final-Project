@@ -20,6 +20,11 @@ import Inventory from "../Pages/Inventory";
 import Analytics from "../Pages/Analytics";
 import PharmacyReservation from "../Pages/PharmacyReservation";
 
+import AdminLayout from "../layout/AdminLayout";
+import Overview from "../Pages/Overview";
+import ManageUser from "../Pages/ManageUser";
+import PharmacyManagement from "../Pages/PharmacyManagement";
+
 import { PATHS } from "./pathes";
 
 export default function AppRoutes() {
@@ -57,6 +62,13 @@ export default function AppRoutes() {
         <Route path="inventory" element={<Inventory />} />
         <Route path="analytics" element={<Analytics />} />
         <Route path="reservations" element={<PharmacyReservation />} />
+      </Route>
+
+      <Route path="/admin" element={<AdminLayout />}>
+        <Route index element={<Overview />} />
+        <Route path="overview" element={<Overview />} />
+        <Route path="users" element={<ManageUser />} />
+        <Route path="pharmacies" element={<PharmacyManagement />} />
       </Route>
     </Routes>
   );
