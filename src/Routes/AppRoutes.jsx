@@ -42,13 +42,6 @@ export default function AppRoutes() {
       <Route path={PATHS.ADMIN_SIGNUP} element={<AdminSignUp />} />
 
       <Route path="/user" element={<UserLayout />}>
-        <Route path="home" element={<HomeUser />} />
-        <Route path="search" element={<SearchUser />} />
-        <Route path="reservations" element={<ReserveUser />} />
-        <Route path="profile" element={<ProfileUser />} />
-      </Route>
-
-      <Route path="/userlayout" element={<UserLayout />}>
         <Route index element={<HomeUser />} />
         <Route path="home" element={<HomeUser />} />
         <Route path="search" element={<SearchUser />} />

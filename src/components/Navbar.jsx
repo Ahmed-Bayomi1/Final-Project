@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { PATHS } from '../Routes/pathes';
 import './Navbar.css';
 
@@ -10,6 +10,14 @@ const NAV_ITEMS = [
 ];
 
 export default function Navbar() {
+    const navigate = useNavigate();
+
+    const handleLogout = () => {
+        // clear any stored user session here if you have one, e.g.:
+        // localStorage.removeItem("userToken");
+        navigate(PATHS.HOME);
+    };
+
     return (
         <nav className="app-navbar">
             <div className="app-navbar__brand">
@@ -32,6 +40,15 @@ export default function Navbar() {
                     </li>
                 ))}
             </ul>
+
+            <button
+                type="button"
+                className="app-navbar__logout"
+                onClick={handleLogout}
+            >
+                <span className="app-navbar__icon">🚪</span>
+                <span className="app-navbar__label">Logout</span>
+            </button>
         </nav>
     );
 }

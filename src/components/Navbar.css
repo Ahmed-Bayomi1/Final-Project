@@ -140,3 +140,37 @@
         font-size: 10.5px;
     }
 }
+
+.app-navbar__logout {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-left: auto;
+    padding: 0.5rem 1rem;
+    border: 1px solid #e2555a;
+    border-radius: 8px;
+    background: transparent;
+    color: #e2555a;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease, transform 0.15s ease;
+}
+
+.app-navbar__logout:hover {
+    background-color: #e2555a;
+    color: #ffffff;
+}
+
+.app-navbar__logout:active {
+    transform: scale(0.97);
+}
+
+.app-navbar__logout .app-navbar__icon {
+    font-size: 1.1rem;
+    line-height: 1;
+}
+
+.app-navbar__logout .app-navbar__label {
+    line-height: 1;
+}

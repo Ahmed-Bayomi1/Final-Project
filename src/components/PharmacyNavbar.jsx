@@ -1,19 +1,27 @@
- import { useState } from "react";
-import { NavLink } from "react-router-dom";
-import { PATHS } from "../Routes/pathes";
-import "./PharmacyNavbar.css";
+    import { useState } from "react";
+    import { NavLink, useNavigate } from "react-router-dom";
+    import { PATHS } from "../Routes/pathes";
+    import "./PharmacyNavbar.css";
 
-const NAV_LINKS = [
-  { label: "Dashboard", to: PATHS.PHARMACY_DASHBOARD },
-  { label: "Inventory", to: PATHS.PHARMACY_INVENTORY },
-  { label: "Analytics", to: PATHS.PHARMACY_ANALYTICS },
-  { label: "Reservations", to: PATHS.PHARMACY_RESERVATIONS },
-];
+    const NAV_LINKS = [
+    { label: "Dashboard", to: PATHS.PHARMACY_DASHBOARD },
+    { label: "Inventory", to: PATHS.PHARMACY_INVENTORY },
+    { label: "Analytics", to: PATHS.PHARMACY_ANALYTICS },
+    { label: "Reservations", to: PATHS.PHARMACY_RESERVATIONS },
+    ];
 
     function PharmacyNavbar() {
     const [isOpen, setIsOpen] = useState(false);
+    const navigate = useNavigate();
 
     const closeMenu = () => setIsOpen(false);
+
+    const handleLogout = () => {
+        closeMenu();
+        // clear any stored pharmacy session here if you have one, e.g.:
+        // localStorage.removeItem("pharmacyToken");
+        navigate(PATHS.LANDING_PAGE);
+    };
 
     return (
         <nav className="navbar-pharmacy">
@@ -66,14 +74,18 @@ const NAV_LINKS = [
                 <button
                 type="button"
                 className="navbar-pharmacy__logout"
-                onClick={closeMenu}
+                onClick={handleLogout}
                 >
                 Logout
                 </button>
             </li>
             </ul>
 
-            <button type="button" className="navbar-pharmacy__logout navbar-pharmacy__logout--desktop">
+            <button
+            type="button"
+            className="navbar-pharmacy__logout navbar-pharmacy__logout--desktop"
+            onClick={handleLogout}
+            >
             Logout
             </button>
         </div>

@@ -1,6 +1,8 @@
 export const PATHS = {
     HOME: "/",
 
+    LANDING_PAGE: "/",   // or "/landing", whatever route you used in AppRoutes.jsx
+    ADMIN_LOGIN: "/admin/login",
     USER_LOGIN: "/user/login",
     USER_SIGNUP: "/user/signup",
 
