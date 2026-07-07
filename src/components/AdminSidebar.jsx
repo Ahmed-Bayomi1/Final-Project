@@ -96,9 +96,9 @@
     const handleLinkClick = () => setIsOpen(false);
 
     const handleSignOut = () => {
-        setIsOpen(false);
-        navigate(PATHS.ADMIN_LOGIN);
-    };
+    setIsOpen(false);
+    navigate(PATHS.LANDING_PAGE); // instead of PATHS.ADMIN_LOGIN
+};
 
     return (
         <>
