@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { supabase } from '../supabase';
-import ReservationModal from '../components/ReservationModal';
-import './SearchUser.css';
+import ReservationModal from './ReservationModal';
+import './MedicineBrowse.css';
 
-export default function SearchUser() {
+export default function MedicineBrowse() {
     const { user } = useOutletContext() || {};
     
     const [medicines, setMedicines] = useState([]);

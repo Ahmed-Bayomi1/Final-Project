@@ -14,6 +14,9 @@ import SearchUser from "../Pages/SearchUser";
 import ReserveUser from "../Pages/ReserveUser";
 import ProfileUser from "../Pages/ProfileUser";
 
+// 👇 السطر ده ضفناه عشان نستدعي صفحة تصفح الأدوية
+import MedicineBrowse from "../components/MedicineBrowse"; 
+
 import PharmacyLayout from "../layout/PharmacyLayout";
 import PharmacyDashboard from "../Pages/PharmacyDashboard";
 import Inventory from "../Pages/Inventory";
@@ -44,6 +47,8 @@ export default function AppRoutes() {
       <Route path="/user" element={<UserLayout />}>
         <Route path="home" element={<HomeUser />} />
         <Route path="search" element={<SearchUser />} />
+        {/* 👇 ضفنا المسار الجديد هنا */}
+        <Route path="browse-medicines" element={<MedicineBrowse />} />
         <Route path="reservations" element={<ReserveUser />} />
         <Route path="profile" element={<ProfileUser />} />
       </Route>
@@ -52,6 +57,8 @@ export default function AppRoutes() {
         <Route index element={<HomeUser />} />
         <Route path="home" element={<HomeUser />} />
         <Route path="search" element={<SearchUser />} />
+        {/* 👇 وضفناه هنا كمان */}
+        <Route path="browse-medicines" element={<MedicineBrowse />} />
         <Route path="reservations" element={<ReserveUser />} />
         <Route path="profile" element={<ProfileUser />} />
       </Route>
