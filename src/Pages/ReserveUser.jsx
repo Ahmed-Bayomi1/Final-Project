@@ -1,41 +1,33 @@
+import { useEffect, useState } from 'react';
+import { supabase } from '../supabase';
 import './ReserveUser.css';
-
-// Replace with real data (e.g. from API / auth context)
-const RESERVATIONS = [
-    {
-        id: 'RX-4821',
-        medicine: 'Amoxicillin 500mg',
-        pharmacy: 'El-Shifa Pharmacy',
-        pharmacyType: 'blue',
-        date: '2026-06-23',
-        price: 45,
-        status: 'pending',
-    },
-    {
-        id: 'RX-7104',
-        medicine: 'Cetirizine 10mg',
-        pharmacy: 'El-Shifa Pharmacy',
-        pharmacyType: 'blue',
-        date: '2026-06-22',
-        price: 28,
-        status: 'collected',
-    },
-    {
-        id: 'RX-2241',
-        medicine: 'Ibuprofen 400mg',
-        pharmacy: 'Al-Amal Drug Store',
-        pharmacyType: 'green',
-        date: '2026-06-20',
-        price: 18,
-        status: 'collected',
-    },
-];
 
 function getStats(reservations) {
     return {
         pending: reservations.filter((r) => r.status === 'pending').length,
         ready: reservations.filter((r) => r.status === 'ready').length,
         collected: reservations.filter((r) => r.status === 'collected').length,
+    };
+}
+
+// Transform nested Supabase data into format expected by UI
+function transformReservation(data) {
+    const medicines = data.reservation_items.map(item => 
+        `${item.medicines.name} ${item.medicines.dosage}`
+    ).join(', ');
+    
+    const totalPrice = data.reservation_items.reduce((sum, item) => 
+        sum + (item.subtotal || item.quantity_requested * item.unit_price), 0
+    );
+
+    return {
+        id: data.id,
+        medicine: medicines,
+        pharmacy: data.pharmacies?.name || 'Unknown Pharmacy',
+        pharmacyType: 'blue', // Default color, can be customized based on pharmacy category
+        date: new Date(data.reservation_date).toISOString().split('T')[0],
+        price: totalPrice,
+        status: data.status,
     };
 }
 
@@ -104,7 +96,80 @@ function ReservationCard({ reservation }) {
 }
 
 export default function ReserveUser() {
-    const stats = getStats(RESERVATIONS);
+    const [reservations, setReservations] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        async function fetchReservations() {
+            try {
+                setLoading(true);
+                setError(null);
+
+                // Get current authenticated user
+                const { data: { user }, error: authError } = await supabase.auth.getUser();
+                if (authError || !user) {
+                    setError('Not authenticated');
+                    setReservations([]);
+                    return;
+                }
+
+                // Fetch reservations with pharmacy and medicine details
+                const { data, error: fetchError } = await supabase
+                    .from('reservations')
+                    .select(`
+                        *,
+                        pharmacies(name),
+                        reservation_items(
+                            quantity_requested,
+                            unit_price,
+                            subtotal,
+                            medicines(name, dosage)
+                        )
+                    `)
+                    .eq('user_id', user.id)
+                    .order('reservation_date', { ascending: false });
+
+                if (fetchError) {
+                    throw fetchError;
+                }
+
+                // Transform data for UI
+                const transformedData = (data || []).map(transformReservation);
+                setReservations(transformedData);
+            } catch (err) {
+                console.error('Error fetching reservations:', err);
+                setError(err.message || 'Failed to load reservations');
+                setReservations([]);
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        fetchReservations();
+    }, []);
+
+    const stats = getStats(reservations);
+
+    if (loading) {
+        return (
+            <div className="reserve-user">
+                <div className="reserve-user__container">
+                    <p style={{ textAlign: 'center', padding: '2rem' }}>Loading reservations...</p>
+                </div>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="reserve-user">
+                <div className="reserve-user__container">
+                    <p style={{ textAlign: 'center', padding: '2rem', color: 'red' }}>Error: {error}</p>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="reserve-user">
@@ -112,7 +177,7 @@ export default function ReserveUser() {
                 <header className="reserve-user__header">
                     <h1 className="reserve-user__title">My Reservations</h1>
                     <p className="reserve-user__subtitle">
-                        {RESERVATIONS.length} total reservations
+                        {reservations.length} total reservations
                     </p>
                 </header>
 
@@ -123,9 +188,15 @@ export default function ReserveUser() {
                 </div>
 
                 <div className="reserve-user__list">
-                    {RESERVATIONS.map((reservation) => (
-                        <ReservationCard key={reservation.id} reservation={reservation} />
-                    ))}
+                    {reservations.length === 0 ? (
+                        <p style={{ textAlign: 'center', padding: '2rem', color: '#666' }}>
+                            No reservations yet
+                        </p>
+                    ) : (
+                        reservations.map((reservation) => (
+                            <ReservationCard key={reservation.id} reservation={reservation} />
+                        ))
+                    )}
                 </div>
             </div>
         </div>

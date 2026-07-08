@@ -9,16 +9,18 @@ export default function Userlayout() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    useEffect(() => {
+ useEffect(() => {
         const fetchUserData = async () => {
             try {
                 setLoading(true);
+                setError(null);
                 
                 // Get current session
                 const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
                 
                 if (sessionError || !sessionData?.session?.user?.id) {
                     setError('No active session found');
+                    setUser({ full_name: 'User' });
                     setLoading(false);
                     return;
                 }
@@ -30,17 +32,22 @@ export default function Userlayout() {
                     .from('profiles')
                     .select('*')
                     .eq('id', userId)
-                    .single();
+                    .maybeSingle();
 
-                if (profileError) {
-                    setError('Failed to load user profile');
-                    console.error('Profile fetch error:', profileError);
-                } else {
+                // Always set a user object - use profile data if available, otherwise use default
+                if (profileData) {
                     setUser(profileData);
+                } else {
+                    setUser({ full_name: 'User' });
+                }
+
+                // Log error for debugging but don't show error banner
+                if (profileError) {
+                    console.error('Profile fetch error (handled gracefully):', profileError);
                 }
             } catch (err) {
-                setError('An error occurred while fetching user data');
-                console.error('Error:', err);
+                console.error('Critical error:', err);
+                setUser({ full_name: 'User' });
             } finally {
                 setLoading(false);
             }

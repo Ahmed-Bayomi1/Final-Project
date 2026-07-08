@@ -25,8 +25,8 @@ export default function UserSignUp() {
                 data: {
                     full_name: fullName,
                     national_id: nationalId,
-                    phone,
-                    dob,
+                    phone_number: phone,
+                    date_of_birth: dob,
                     address,
                     role: "user",
                 },

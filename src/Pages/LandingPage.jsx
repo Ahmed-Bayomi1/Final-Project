@@ -60,6 +60,15 @@ function AuthModalContent({ role, onClose, hideSignUp = false }) {
         setErrorMessage('');
         setLoading(true);
 
+        // Map user roles to valid database constraint values
+        const roleMapping = {
+            'user': 'user',
+            'pharmacy': 'pharmacy_staff',  // Changed from 'pharmacy' to match DB constraint
+            'admin': 'admin'
+        };
+
+        const mappedRole = roleMapping[isPharmacy ? 'pharmacy' : (isAdmin ? 'admin' : 'user')];
+
         const { data, error } = await supabase.auth.signUp({
             email,
             password,
@@ -67,10 +76,10 @@ function AuthModalContent({ role, onClose, hideSignUp = false }) {
                 data: {
                     full_name: fullName,
                     national_id: nationalId,
-                    phone,
-                    dob,
+                    phone_number: phone,  // Changed from 'phone' to match new schema
+                    date_of_birth: dob,   // Changed from 'dob' to match new schema
                     address,
-                    role: isPharmacy ? 'pharmacy' : 'user',
+                    role: mappedRole,  // Use mapped role
                 },
             },
         });
