@@ -1,29 +1,12 @@
+    import { useEffect, useState } from "react";
+    import { supabase } from "../supabaseClient";
     import "./PharmacyDashboard.css";
 
-    // Mock data — replace with real API calls once the backend endpoint is ready.
     const PHARMACY_INFO = {
     name: "El-Shifa Pharmacy",
     city: "Cairo",
     lastUpdated: "today",
     };
-
-    const STATS = [
-    { id: "total", label: "Total Medicines", value: 7, icon: "pill", tone: "blue" },
-    { id: "inStock", label: "In Stock", value: 5, icon: "check", tone: "green" },
-    { id: "lowStock", label: "Low Stock Items", value: 1, sublabel: "≤ 30 units", icon: "warning", tone: "amber" },
-    { id: "reservations", label: "Active Reservations", value: 2, icon: "clipboard", tone: "purple" },
-    ];
-
-    const LOW_STOCK_ALERT = {
-    title: "Low stock alert",
-    message: "Cetirizine 10mg is running low.",
-    };
-
-    const INVENTORY_STATUS = [
-    { id: "inStock", label: "In Stock", count: 5, total: 7, tone: "green" },
-    { id: "lowStock", label: "Low Stock", count: 1, total: 7, tone: "amber" },
-    { id: "outOfStock", label: "Out of Stock", count: 1, total: 7, tone: "red" },
-    ];
 
     const RECENT_RESERVATIONS = [
     { id: 1, medicine: "Amoxicillin 500mg", patient: "Sara Ahmed", rx: "RX-4821", status: "pending" },
@@ -79,6 +62,81 @@
     }
 
     function PharmacyDashboard() {
+    const [inventoryItems, setInventoryItems] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [metrics, setMetrics] = useState({
+        totalMedicines: 0,
+        inStockCount: 0,
+        lowStockCount: 0,
+        outOfStockCount: 0,
+        totalValue: 0,
+    });
+
+    useEffect(() => {
+        const fetchInventory = async () => {
+        try {
+            setLoading(true);
+            const { data, error } = await supabase.from("pharmacy_medicines").select("*");
+
+            if (error) throw error;
+
+            const items = data || [];
+            const totalMedicines = items.length;
+            const lowStockCount = items.filter(
+            (item) => Number(item.quantity_in_stock) > 0 && Number(item.quantity_in_stock) < 10
+            ).length;
+            const outOfStockCount = items.filter(
+            (item) => Number(item.quantity_in_stock) === 0
+            ).length;
+            const inStockCount = totalMedicines - lowStockCount - outOfStockCount;
+            const totalValue = items.reduce(
+            (sum, item) => sum + Number(item.price_per_unit || 0) * Number(item.quantity_in_stock || 0),
+            0
+            );
+
+            setInventoryItems(items);
+            setMetrics({
+            totalMedicines,
+            inStockCount,
+            lowStockCount,
+            outOfStockCount,
+            totalValue,
+            });
+        } catch (err) {
+            console.error("Error fetching pharmacy inventory:", err);
+            setInventoryItems([]);
+            setMetrics({
+            totalMedicines: 0,
+            inStockCount: 0,
+            lowStockCount: 0,
+            outOfStockCount: 0,
+            totalValue: 0,
+            });
+        } finally {
+            setLoading(false);
+        }
+        };
+
+        fetchInventory();
+    }, []);
+
+    const stats = [
+        { id: "total", label: "Total Medicines", value: loading ? "Loading..." : metrics.totalMedicines, icon: "pill", tone: "blue" },
+        { id: "inStock", label: "In Stock", value: loading ? "Loading..." : metrics.inStockCount, icon: "check", tone: "green" },
+        { id: "lowStock", label: "Low Stock Items", value: loading ? "Loading..." : metrics.lowStockCount, sublabel: "≤ 10 units", icon: "warning", tone: "amber" },
+        { id: "outOfStock", label: "Out of Stock", value: loading ? "Loading..." : metrics.outOfStockCount, icon: "clipboard", tone: "purple" },
+    ];
+
+    const inventoryStatus = [
+        { id: "inStock", label: "In Stock", count: loading ? 0 : metrics.inStockCount, total: loading ? 1 : metrics.totalMedicines || 1, tone: "green" },
+        { id: "lowStock", label: "Low Stock", count: loading ? 0 : metrics.lowStockCount, total: loading ? 1 : metrics.totalMedicines || 1, tone: "amber" },
+        { id: "outOfStock", label: "Out of Stock", count: loading ? 0 : metrics.outOfStockCount, total: loading ? 1 : metrics.totalMedicines || 1, tone: "red" },
+    ];
+
+    const lowStockAlert = inventoryItems.find(
+        (item) => Number(item.quantity_in_stock) > 0 && Number(item.quantity_in_stock) < 10
+    );
+
     return (
         <div className="pharmacy-dashboard">
         <header className="pharmacy-dashboard__header">
@@ -89,7 +147,7 @@
         </header>
 
         <section className="pharmacy-dashboard__stats">
-            {STATS.map((stat) => (
+            {stats.map((stat) => (
             <div key={stat.id} className="pharmacy-dashboard__stat-card">
                 <div className="pharmacy-dashboard__stat-top">
                 <span className="pharmacy-dashboard__stat-label">{stat.label}</span>
@@ -107,14 +165,16 @@
             ))}
         </section>
 
-        {LOW_STOCK_ALERT && (
+        {lowStockAlert && (
             <section className="pharmacy-dashboard__alert" role="alert">
             <span className="pharmacy-dashboard__alert-icon">
                 <StatIcon type="warning" />
             </span>
             <div>
-                <p className="pharmacy-dashboard__alert-title">{LOW_STOCK_ALERT.title}</p>
-                <p className="pharmacy-dashboard__alert-message">{LOW_STOCK_ALERT.message}</p>
+                <p className="pharmacy-dashboard__alert-title">Low stock alert</p>
+                <p className="pharmacy-dashboard__alert-message">
+                {lowStockAlert.medicine_id || "A medicine"} is running low.
+                </p>
             </div>
             </section>
         )}
@@ -124,7 +184,7 @@
             <h2 className="pharmacy-dashboard__panel-title">Inventory Status</h2>
 
             <div className="pharmacy-dashboard__bars">
-                {INVENTORY_STATUS.map((row) => (
+                {inventoryStatus.map((row) => (
                 <div key={row.id} className="pharmacy-dashboard__bar-row">
                     <div className="pharmacy-dashboard__bar-labels">
                     <span className="pharmacy-dashboard__bar-label">{row.label}</span>

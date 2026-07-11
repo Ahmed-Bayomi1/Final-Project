@@ -1,41 +1,43 @@
-    import { useMemo } from "react";
+    import { useEffect, useMemo, useState } from "react";
+    import { supabase } from "../supabaseClient";
     import "./Analytics.css";
 
-    // Mock data — replace with real API calls once the backend endpoint is ready.
     const PHARMACY_INFO = { name: "El-Shifa Pharmacy", period: "Last 7 days" };
 
-    const STATS = [
-    { id: "revenue", label: "Total Revenue", value: "14,220 EGP", change: "+12% vs last week", icon: "trend", tone: "blue" },
-    { id: "reservations", label: "Total Reservations", value: "3", icon: "clipboard", tone: "green" },
-    { id: "fulfillment", label: "Fulfillment Rate", value: "94%", icon: "check", tone: "purple" },
-    { id: "avgOrders", label: "Avg. Daily Orders", value: "18", icon: "pulse", tone: "amber" },
-    ];
+    const CATEGORY_COLORS = {
+    Antibiotics: "#2f5bff",
+    Analgesics: "#12805c",
+    Gastro: "#d97706",
+    Diabetes: "#7c3aed",
+    Cardiology: "#e5484d",
+    Antihistamines: "#0d9488",
+    General: "#64748b",
+    };
 
-    const RESERVATION_TRENDS = [
-    { day: "Mon", value: 12 },
-    { day: "Tue", value: 18 },
-    { day: "Wed", value: 8 },
-    { day: "Thu", value: 22 },
-    { day: "Fri", value: 30 },
-    { day: "Sat", value: 19 },
-    { day: "Sun", value: 14 },
-    ];
+    function inferCategory(medicineName) {
+    const name = String(medicineName || "").toLowerCase();
 
-    const CATEGORY_DISTRIBUTION = [
-    { label: "Antibiotics", count: 2, color: "#2f5bff" },
-    { label: "Analgesics", count: 1, color: "#12805c" },
-    { label: "Gastro", count: 1, color: "#d97706" },
-    { label: "Diabetes", count: 1, color: "#7c3aed" },
-    { label: "Cardiology", count: 1, color: "#e5484d" },
-    { label: "Antihistamines", count: 1, color: "#0d9488" },
-    ];
+    if (name.includes("anti") || name.includes("antibiotic") || name.includes("bact")) {
+        return "Antibiotics";
+    }
+    if (name.includes("pain") || name.includes("paracetamol") || name.includes("ibuprofen") || name.includes("analges")) {
+        return "Analgesics";
+    }
+    if (name.includes("gastro") || name.includes("acid") || name.includes("antacid") || name.includes("digest")) {
+        return "Gastro";
+    }
+    if (name.includes("diab") || name.includes("glucose") || name.includes("sugar")) {
+        return "Diabetes";
+    }
+    if (name.includes("card") || name.includes("heart") || name.includes("cholest") || name.includes("blood")) {
+        return "Cardiology";
+    }
+    if (name.includes("hist") || name.includes("allergy") || name.includes("cetir")) {
+        return "Antihistamines";
+    }
 
-    const MOST_RESERVED_MEDICINES = [
-    { id: 1, name: "Amoxicillin 500mg", count: 24 },
-    { id: 2, name: "Paracetamol 1g", count: 19 },
-    { id: 3, name: "Cetirizine 10mg", count: 12 },
-    { id: 4, name: "Atorvastatin 40mg", count: 8 },
-    ];
+    return "General";
+    }
 
     function Icon({ type }) {
     switch (type) {
@@ -93,8 +95,17 @@
     const chartW = width - padding.left - padding.right;
     const chartH = height - padding.top - padding.bottom;
 
-    const maxValue = 32; // fixed scale to match the reference design's gridlines
-    const yTicks = [0, 8, 16, 24, 32];
+    const values = data.map((d) => d.value);
+    const maxValue = Math.max(...values, 1);
+    const tickCount = 4;
+    const yTicks = Array.from({ length: tickCount + 1 }, (_, index) => {
+        const step = maxValue / tickCount;
+        return Math.round(step * index);
+    });
+
+    if (!data.length) {
+        return <p className="analytics__empty">No trend data yet.</p>;
+    }
 
     const points = data.map((d, i) => ({
         x: padding.left + (i / (data.length - 1)) * chartW,
@@ -157,6 +168,10 @@
     const circumference = 2 * Math.PI * radius;
     const total = data.reduce((sum, d) => sum + d.count, 0);
 
+    if (!data.length || total === 0) {
+        return <p className="analytics__empty">No inventory data yet.</p>;
+    }
+
     let offsetSoFar = 0;
     const segments = data.map((d) => {
         const fraction = d.count / total;
@@ -198,9 +213,175 @@
     }
 
     function Analytics() {
+    const [metrics, setMetrics] = useState({
+        totalRevenue: 0,
+        totalReservations: 0,
+        fulfillmentRate: 0,
+        avgDailyOrders: 0,
+    });
+    const [trendData, setTrendData] = useState([]);
+    const [categoryDistribution, setCategoryDistribution] = useState([]);
+    const [mostReservedMedicines, setMostReservedMedicines] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchAnalyticsData = async () => {
+        try {
+            setLoading(true);
+
+            const { data: reservationsData, error: reservationsError } = await supabase
+            .from("reservations")
+            .select(`
+                id,
+                reservation_date,
+                created_at,
+                status,
+                total_amount,
+                reservation_items(quantity_requested, subtotal, medicines(name))
+            `)
+            .order("reservation_date", { ascending: false });
+
+            if (reservationsError) throw reservationsError;
+
+            const reservations = reservationsData || [];
+            const completedStatuses = ["collected", "completed", "fulfilled"];
+            const totalReservations = reservations.length;
+            const fulfilledCount = reservations.filter((reservation) =>
+            completedStatuses.includes(String(reservation.status || "").toLowerCase())
+            ).length;
+            const fulfillmentRate = totalReservations > 0 ? Math.round((fulfilledCount / totalReservations) * 100) : 0;
+
+            const revenue = reservations.reduce((sum, reservation) => {
+            const candidateAmount = Number(reservation.total_amount ?? 0);
+            if (candidateAmount > 0) return sum + candidateAmount;
+
+            const itemSubtotal = (reservation.reservation_items || []).reduce(
+                (subSum, item) => subSum + Number(item.subtotal || 0),
+                0
+            );
+            return sum + itemSubtotal;
+            }, 0);
+
+            const today = new Date();
+            const trendMap = new Map();
+            for (let i = 6; i >= 0; i -= 1) {
+            const date = new Date(today);
+            date.setDate(today.getDate() - i);
+            const key = date.toISOString().slice(0, 10);
+            const label = date.toLocaleDateString("en-US", { weekday: "short" });
+            trendMap.set(key, { day: label, value: 0 });
+            }
+
+            reservations.forEach((reservation) => {
+            const rawDate = reservation.reservation_date || reservation.created_at;
+            if (!rawDate) return;
+            const date = new Date(rawDate);
+            if (Number.isNaN(date.getTime())) return;
+            const key = date.toISOString().slice(0, 10);
+            if (trendMap.has(key)) {
+                trendMap.set(key, { day: trendMap.get(key).day, value: trendMap.get(key).value + 1 });
+            }
+            });
+
+            const trendSeries = Array.from(trendMap.values());
+
+            const { data: inventoryData, error: inventoryError } = await supabase
+            .from("pharmacy_medicines")
+            .select("*, medicines(name)");
+
+            if (inventoryError) throw inventoryError;
+
+            const inventoryItems = inventoryData || [];
+            const categoryCounts = new Map();
+            inventoryItems.forEach((item) => {
+            const medicineName = item.medicines?.name || item.medicine_id || "";
+            const category = inferCategory(medicineName);
+            categoryCounts.set(category, (categoryCounts.get(category) || 0) + 1);
+            });
+
+            const distribution = Array.from(categoryCounts.entries()).map(([label, count]) => ({
+            label,
+            count,
+            color: CATEGORY_COLORS[label] || "#64748b",
+            }));
+
+            const medicineCounts = new Map();
+            reservations.forEach((reservation) => {
+            const items = reservation.reservation_items || [];
+            items.forEach((item) => {
+                const name = item.medicines?.name || "Unknown medicine";
+                medicineCounts.set(name, (medicineCounts.get(name) || 0) + (Number(item.quantity_requested) || 1));
+            });
+            });
+
+            const topMedicines = Array.from(medicineCounts.entries())
+            .map(([name, count]) => ({ id: name, name, count }))
+            .sort((a, b) => b.count - a.count)
+            .slice(0, 4);
+
+            setMetrics({
+            totalRevenue: revenue,
+            totalReservations,
+            fulfillmentRate,
+            avgDailyOrders: totalReservations > 0 ? Number((totalReservations / 7).toFixed(1)) : 0,
+            });
+            setTrendData(trendSeries);
+            setCategoryDistribution(distribution);
+            setMostReservedMedicines(topMedicines);
+        } catch (err) {
+            console.error("Error fetching analytics data:", err);
+            setMetrics({
+            totalRevenue: 0,
+            totalReservations: 0,
+            fulfillmentRate: 0,
+            avgDailyOrders: 0,
+            });
+            setTrendData([]);
+            setCategoryDistribution([]);
+            setMostReservedMedicines([]);
+        } finally {
+            setLoading(false);
+        }
+        };
+
+        fetchAnalyticsData();
+    }, []);
+
+    const stats = [
+        {
+        id: "revenue",
+        label: "Total Revenue",
+        value: loading ? "Loading..." : `${metrics.totalRevenue.toLocaleString()} EGP`,
+        change: "+Live data",
+        icon: "trend",
+        tone: "blue",
+        },
+        {
+        id: "reservations",
+        label: "Total Reservations",
+        value: loading ? "Loading..." : metrics.totalReservations,
+        icon: "clipboard",
+        tone: "green",
+        },
+        {
+        id: "fulfillment",
+        label: "Fulfillment Rate",
+        value: loading ? "Loading..." : `${metrics.fulfillmentRate}%`,
+        icon: "check",
+        tone: "purple",
+        },
+        {
+        id: "avgOrders",
+        label: "Avg. Daily Orders",
+        value: loading ? "Loading..." : metrics.avgDailyOrders,
+        icon: "pulse",
+        tone: "amber",
+        },
+    ];
+
     const maxReserved = useMemo(
-        () => Math.max(...MOST_RESERVED_MEDICINES.map((m) => m.count)),
-        []
+        () => Math.max(...mostReservedMedicines.map((m) => m.count), 1),
+        [mostReservedMedicines]
     );
 
     return (
@@ -213,7 +394,7 @@
         </header>
 
         <section className="analytics__stats">
-            {STATS.map((stat) => (
+            {stats.map((stat) => (
             <div key={stat.id} className="analytics__stat-card">
                 <div className="analytics__stat-top">
                 <span className="analytics__stat-label">{stat.label}</span>
@@ -232,25 +413,35 @@
         <section className="analytics__panels">
             <div className="analytics__panel">
             <h2 className="analytics__panel-title">Reservation Trends (Last 7 Days)</h2>
-            <ReservationTrendChart data={RESERVATION_TRENDS} />
+            {loading ? (
+                <p className="analytics__empty">Loading reservation trends...</p>
+            ) : (
+                <ReservationTrendChart data={trendData} />
+            )}
             </div>
 
             <div className="analytics__panel">
             <h2 className="analytics__panel-title">Inventory Distribution by Category</h2>
             <div className="analytics__donut-row">
-                <DonutChart data={CATEGORY_DISTRIBUTION} />
-                <ul className="analytics__legend">
-                {CATEGORY_DISTRIBUTION.map((cat) => (
-                    <li key={cat.label} className="analytics__legend-item">
-                    <span
-                        className="analytics__legend-dot"
-                        style={{ backgroundColor: cat.color }}
-                    />
-                    <span className="analytics__legend-label">{cat.label}</span>
-                    <span className="analytics__legend-count">{cat.count}</span>
-                    </li>
-                ))}
-                </ul>
+                {loading ? (
+                <p className="analytics__empty">Loading inventory distribution...</p>
+                ) : (
+                <>
+                    <DonutChart data={categoryDistribution} />
+                    <ul className="analytics__legend">
+                    {categoryDistribution.map((cat) => (
+                        <li key={cat.label} className="analytics__legend-item">
+                        <span
+                            className="analytics__legend-dot"
+                            style={{ backgroundColor: cat.color }}
+                        />
+                        <span className="analytics__legend-label">{cat.label}</span>
+                        <span className="analytics__legend-count">{cat.count}</span>
+                        </li>
+                    ))}
+                    </ul>
+                </>
+                )}
             </div>
             </div>
         </section>
@@ -258,19 +449,25 @@
         <section className="analytics__panel analytics__panel--full">
             <h2 className="analytics__panel-title">Most Reserved Medicines</h2>
             <div className="analytics__ranked-list">
-            {MOST_RESERVED_MEDICINES.map((med, index) => (
+            {loading ? (
+                <p className="analytics__empty">Loading reserved medicines...</p>
+            ) : mostReservedMedicines.length > 0 ? (
+                mostReservedMedicines.map((med, index) => (
                 <div key={med.id} className="analytics__ranked-row">
-                <span className="analytics__ranked-index">{index + 1}</span>
-                <span className="analytics__ranked-name">{med.name}</span>
-                <div className="analytics__ranked-track">
+                    <span className="analytics__ranked-index">{index + 1}</span>
+                    <span className="analytics__ranked-name">{med.name}</span>
+                    <div className="analytics__ranked-track">
                     <div
-                    className="analytics__ranked-fill"
-                    style={{ width: `${(med.count / maxReserved) * 100}%` }}
+                        className="analytics__ranked-fill"
+                        style={{ width: `${(med.count / maxReserved) * 100}%` }}
                     />
+                    </div>
+                    <span className="analytics__ranked-count">{med.count}</span>
                 </div>
-                <span className="analytics__ranked-count">{med.count}</span>
-                </div>
-            ))}
+                ))
+            ) : (
+                <p className="analytics__empty">No reservation history yet.</p>
+            )}
             </div>
         </section>
         </div>

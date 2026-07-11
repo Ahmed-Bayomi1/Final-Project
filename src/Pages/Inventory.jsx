@@ -1,74 +1,17 @@
-    import { useState, useMemo } from "react";
+    import { useState, useEffect, useMemo } from "react";
+    import { supabase } from "../supabaseClient";
     import "./Inventory.css";
-
-    // Mock data — replace with real API calls once the backend endpoint is ready.
-    const MEDICINES = [
-    {
-        id: 1,
-        name: "Amoxicillin 500mg",
-        description: "Broad-spectrum antibiotic...",
-        category: "Antibiotics",
-        price: 45,
-        quantity: 120,
-        status: "in-stock",
-        lastUpdated: "2026-06-24",
-    },
-    {
-        id: 2,
-        name: "Paracetamol 1g",
-        description: "Pain relief and fever reducer...",
-        category: "Analgesics",
-        price: 12,
-        quantity: 340,
-        status: "in-stock",
-        lastUpdated: "2026-06-24",
-    },
-    {
-        id: 3,
-        name: "Omeprazole 20mg",
-        description: "Proton pump inhibitor for...",
-        category: "Gastro",
-        price: 78,
-        quantity: 88,
-        status: "in-stock",
-        lastUpdated: "2026-06-23",
-    },
-    {
-        id: 4,
-        name: "Metformin 850mg",
-        description: "First-line medication for ty...",
-        category: "Diabetes",
-        price: 55,
-        quantity: 0,
-        status: "out-of-stock",
-        lastUpdated: "2026-06-22",
-    },
-    {
-        id: 5,
-        name: "Atorvastatin 40mg",
-        description: "Cholesterol-lowering stati...",
-        category: "Cardiology",
-        price: 132,
-        quantity: 60,
-        status: "in-stock",
-        lastUpdated: "2026-06-24",
-    },
-    {
-        id: 6,
-        name: "Cetirizine 10mg",
-        description: "Non-drowsy allergy relief",
-        category: "Antihistamines",
-        price: 28,
-        quantity: 18,
-        status: "low-stock",
-        lastUpdated: "2026-06-23",
-    },
-    ];
 
     const STATUS_CONFIG = {
     "in-stock": { label: "In Stock", icon: "check" },
     "low-stock": { label: "Low Stock", icon: "warning" },
     "out-of-stock": { label: "Out of Stock", icon: "alert" },
+    };
+
+    const getStatus = (quantity) => {
+    if (quantity <= 0) return "out-of-stock";
+    if (quantity < 20) return "low-stock";
+    return "in-stock";
     };
 
     function StatusIcon({ type }) {
@@ -131,30 +74,197 @@
 
     function Inventory() {
     const [searchTerm, setSearchTerm] = useState("");
+    const [medicines, setMedicines] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [editingMedicine, setEditingMedicine] = useState(null);
+    const [formData, setFormData] = useState({
+        pharmacy_id: "",
+        medicineName: "",
+        dosage: "",
+        unit: "",
+        quantity_in_stock: 0,
+        price_per_unit: "",
+        expiry_date: "",
+        is_available: true,
+    });
 
-    const totalItems = MEDICINES.length;
-    const inStockCount = MEDICINES.filter((m) => m.status !== "out-of-stock").length;
+    const fetchMedicines = async () => {
+        try {
+        setLoading(true);
+        const { data, error } = await supabase
+            .from("pharmacy_medicines")
+            .select("*, medicines(name)")
+            .order("id", { ascending: true });
+
+        if (error) throw error;
+        setMedicines(data || []);
+        } catch (err) {
+        console.error("Error fetching medicines:", err);
+        } finally {
+        setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchMedicines();
+    }, []);
+
+
+    const totalItems = medicines.length;
+    const inStockCount = medicines.filter((m) => getStatus(m.quantity_in_stock) !== "out-of-stock").length;
 
     const filteredMedicines = useMemo(() => {
         const term = searchTerm.trim().toLowerCase();
-        if (!term) return MEDICINES;
-        return MEDICINES.filter(
-        (m) =>
-            m.name.toLowerCase().includes(term) ||
-            m.category.toLowerCase().includes(term)
-        );
-    }, [searchTerm]);
+        if (!term) return medicines;
+        return medicines.filter((m) => {
+        const haystack = [
+            m.medicine_id,
+            m.pharmacy_id,
+            m.quantity_in_stock,
+            m.price_per_unit,
+            m.is_available,
+        ]
+            .filter(Boolean)
+            .join(" ")
+            .toString()
+            .toLowerCase();
 
-    const handleAddMedicine = () => {
-        // Hook this up to a modal / form once the create-medicine flow is ready.
+        return haystack.includes(term);
+        });
+    }, [searchTerm, medicines]);
+
+    const handleOpenModal = (medicine = null) => {
+        const fallbackPharmacyId = medicines[0]?.pharmacy_id || "";
+
+        if (medicine) {
+        setEditingMedicine(medicine);
+        setFormData({
+            pharmacy_id: medicine.pharmacy_id || fallbackPharmacyId,
+            medicineName: medicine.medicine_name || "",
+            dosage: medicine.dosage || "",
+            unit: medicine.unit || "",
+            quantity_in_stock: medicine.quantity_in_stock ?? 0,
+            price_per_unit: medicine.price_per_unit ?? "",
+            expiry_date: medicine.expiry_date || "",
+            is_available: medicine.is_available ?? true,
+        });
+        } else {
+        setEditingMedicine(null);
+        setFormData({
+            pharmacy_id: fallbackPharmacyId,
+            medicineName: "",
+            dosage: "",
+            unit: "",
+            quantity_in_stock: 0,
+            price_per_unit: "",
+            expiry_date: "",
+            is_available: true,
+        });
+        }
+        setIsModalOpen(true);
     };
 
-    const handleEdit = (id) => {
-        // Hook this up to an edit modal / form once ready.
+    const handleCloseModal = () => {
+        setIsModalOpen(false);
+        setEditingMedicine(null);
+        setFormData({
+        pharmacy_id: "",
+        medicineName: "",
+        dosage: "",
+        unit: "",
+        quantity_in_stock: 0,
+        price_per_unit: "",
+        expiry_date: "",
+        is_available: true,
+        });
     };
 
-    const handleDelete = (id) => {
-        // Hook this up to a confirmation + delete API call once ready.
+    const handleChange = (e) => {
+        const { name, value, type, checked } = e.target;
+        setFormData((prev) => ({
+        ...prev,
+        [name]: type === "checkbox" ? checked : value,
+        }));
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        try {
+        const trimmedMedicineName = formData.medicineName.trim();
+        if (!trimmedMedicineName) {
+            window.alert("Please enter a medicine name.");
+            return;
+        }
+
+        const { data: existingMedicine, error: lookupError } = await supabase
+            .from("medicines")
+            .select("id")
+            .ilike("name", trimmedMedicineName)
+            .maybeSingle();
+
+        if (lookupError) throw lookupError;
+
+        let medicineId = existingMedicine?.id;
+
+        if (!medicineId) {
+            const { data: createdMedicine, error: createError } = await supabase
+            .from("medicines")
+            .insert({ name: trimmedMedicineName, dosage: formData.dosage || "N/A", unit: formData.unit || "N/A" })
+            .select("id")
+            .single();
+
+            if (createError) throw createError;
+            medicineId = createdMedicine?.id;
+        }
+
+        if (!medicineId) {
+            throw new Error("Unable to resolve medicine ID.");
+        }
+
+        const payload = {
+            pharmacy_id: formData.pharmacy_id,
+            medicine_id: medicineId,
+            quantity_in_stock: Number(formData.quantity_in_stock),
+            price_per_unit: Number(formData.price_per_unit),
+            expiry_date: formData.expiry_date || null,
+            is_available: Boolean(formData.is_available),
+        };
+
+        if (editingMedicine) {
+            const { error } = await supabase
+            .from("pharmacy_medicines")
+            .update(payload)
+            .eq("id", editingMedicine.id);
+
+            if (error) throw error;
+        } else {
+            const { error } = await supabase.from("pharmacy_medicines").insert(payload);
+            if (error) throw error;
+        }
+
+        handleCloseModal();
+        await fetchMedicines();
+        } catch (err) {
+        console.error("Save error:", err);
+        window.alert("Failed to save medicine. Please try again.");
+        }
+    };
+
+    const handleDelete = async (id) => {
+        const confirmed = window.confirm("Delete this medicine record?");
+        if (!confirmed) return;
+
+        try {
+        const { error } = await supabase.from("pharmacy_medicines").delete().eq("id", id);
+
+        if (error) throw error;
+        setMedicines((prev) => prev.filter((medicine) => medicine.id !== id));
+        } catch (err) {
+        console.error("Delete error:", err);
+        window.alert("Failed to delete medicine. Please try again.");
+        }
     };
 
     return (
@@ -170,7 +280,7 @@
             <button
             type="button"
             className="inventory__add-btn"
-            onClick={handleAddMedicine}
+            onClick={() => handleOpenModal()}
             >
             <StatusIcon type="plus" />
             Add Medicine
@@ -192,54 +302,54 @@
             </div>
 
             {/* Desktop / tablet table */}
+            {loading ? (
+            <p className="inventory__empty">Loading medicines...</p>
+            ) : (
             <div className="inventory__table-wrap">
             <table className="inventory__table">
                 <thead>
                 <tr>
                     <th>Medicine Name</th>
-                    <th>Category</th>
                     <th>Price</th>
                     <th>Quantity</th>
                     <th>Status</th>
-                    <th>Last Updated</th>
+                    <th>Availability</th>
                     <th>Actions</th>
                 </tr>
                 </thead>
                 <tbody>
                 {filteredMedicines.map((med) => {
-                    const status = STATUS_CONFIG[med.status];
+                    const status = STATUS_CONFIG[getStatus(med.quantity_in_stock)];
                     return (
                     <tr key={med.id}>
                         <td>
-                        <div className="inventory__med-name">{med.name}</div>
-                        <div className="inventory__med-desc">{med.description}</div>
+                        <div className="inventory__med-name">{med.medicines?.name || med.medicine_id}</div>
                         </td>
-                        <td className="inventory__category">{med.category}</td>
-                        <td className="inventory__price">{med.price} EGP</td>
-                        <td className={`inventory__quantity inventory__quantity--${med.status}`}>
-                        {med.quantity}
+                        <td className="inventory__price">{med.price_per_unit} EGP</td>
+                        <td className={`inventory__quantity inventory__quantity--${getStatus(med.quantity_in_stock)}`}>
+                        {med.quantity_in_stock}
                         </td>
                         <td>
-                        <span className={`inventory__status inventory__status--${med.status}`}>
+                        <span className={`inventory__status inventory__status--${getStatus(med.quantity_in_stock)}`}>
                             <StatusIcon type={status.icon} />
                             {status.label}
                         </span>
                         </td>
-                        <td className="inventory__updated">{med.lastUpdated}</td>
+                        <td className="inventory__updated">{med.is_available ? "Available" : "Unavailable"}</td>
                         <td>
                         <div className="inventory__actions">
                             <button
                             type="button"
                             className="inventory__action-btn inventory__action-btn--edit"
-                            aria-label={`Edit ${med.name}`}
-                            onClick={() => handleEdit(med.id)}
+                            aria-label={`Edit ${med.medicine_id}`}
+                            onClick={() => handleOpenModal(med)}
                             >
                             <StatusIcon type="edit" />
                             </button>
                             <button
                             type="button"
                             className="inventory__action-btn inventory__action-btn--delete"
-                            aria-label={`Delete ${med.name}`}
+                            aria-label={`Delete ${med.medicine_id}`}
                             onClick={() => handleDelete(med.id)}
                             >
                             <StatusIcon type="trash" />
@@ -256,19 +366,19 @@
                 <p className="inventory__empty">No medicines match "{searchTerm}".</p>
             )}
             </div>
+            )}
 
             {/* Mobile stacked cards */}
             <div className="inventory__cards">
             {filteredMedicines.map((med) => {
-                const status = STATUS_CONFIG[med.status];
+                const status = STATUS_CONFIG[getStatus(med.quantity_in_stock)];
                 return (
                 <div key={med.id} className="inventory__card">
                     <div className="inventory__card-top">
                     <div>
-                        <div className="inventory__med-name">{med.name}</div>
-                        <div className="inventory__med-desc">{med.description}</div>
+                        <div className="inventory__med-name">{med.medicines?.name || med.medicine_id}</div>
                     </div>
-                    <span className={`inventory__status inventory__status--${med.status}`}>
+                    <span className={`inventory__status inventory__status--${getStatus(med.quantity_in_stock)}`}>
                         <StatusIcon type={status.icon} />
                         {status.label}
                     </span>
@@ -276,22 +386,22 @@
 
                     <div className="inventory__card-grid">
                     <div>
-                        <span className="inventory__card-label">Category</span>
-                        <span className="inventory__category">{med.category}</span>
+                        <span className="inventory__card-label">Pharmacy</span>
+                        <span className="inventory__category">{med.pharmacy_id}</span>
                     </div>
                     <div>
                         <span className="inventory__card-label">Price</span>
-                        <span className="inventory__price">{med.price} EGP</span>
+                        <span className="inventory__price">{med.price_per_unit} EGP</span>
                     </div>
                     <div>
                         <span className="inventory__card-label">Quantity</span>
-                        <span className={`inventory__quantity inventory__quantity--${med.status}`}>
-                        {med.quantity}
+                        <span className={`inventory__quantity inventory__quantity--${getStatus(med.quantity_in_stock)}`}>
+                        {med.quantity_in_stock}
                         </span>
                     </div>
                     <div>
-                        <span className="inventory__card-label">Last Updated</span>
-                        <span className="inventory__updated">{med.lastUpdated}</span>
+                        <span className="inventory__card-label">Availability</span>
+                        <span className="inventory__updated">{med.is_available ? "Available" : "Unavailable"}</span>
                     </div>
                     </div>
 
@@ -299,8 +409,8 @@
                     <button
                         type="button"
                         className="inventory__action-btn inventory__action-btn--edit"
-                        aria-label={`Edit ${med.name}`}
-                        onClick={() => handleEdit(med.id)}
+                        aria-label={`Edit ${med.medicine_id}`}
+                        onClick={() => handleOpenModal(med)}
                     >
                         <StatusIcon type="edit" />
                         Edit
@@ -308,7 +418,7 @@
                     <button
                         type="button"
                         className="inventory__action-btn inventory__action-btn--delete"
-                        aria-label={`Delete ${med.name}`}
+                        aria-label={`Delete ${med.medicine_id}`}
                         onClick={() => handleDelete(med.id)}
                     >
                         <StatusIcon type="trash" />
@@ -324,6 +434,100 @@
             )}
             </div>
         </section>
+
+        {isModalOpen && (
+            <div className="inventory__modal-overlay" role="dialog" aria-modal="true">
+            <div className="inventory__modal-box">
+                <h2 className="inventory__modal-title">
+                {editingMedicine ? "Edit Medicine" : "Add Medicine"}
+                </h2>
+                <form onSubmit={handleSubmit} className="inventory__modal-form">
+                <label className="inventory__modal-field">
+                    <span>Medicine Name</span>
+                    <input
+                    type="text"
+                    name="medicineName"
+                    value={formData.medicineName}
+                    onChange={handleChange}
+                    placeholder="e.g. Amoxicillin"
+                    required
+                    />
+                </label>
+                <label className="inventory__modal-field">
+                    <span>Dosage</span>
+                    <input
+                    type="text"
+                    name="dosage"
+                    value={formData.dosage}
+                    onChange={handleChange}
+                    placeholder="e.g. 200mg"
+                    />
+                </label>
+                <label className="inventory__modal-field">
+                    <span>Unit</span>
+                    <input
+                    type="text"
+                    name="unit"
+                    value={formData.unit}
+                    onChange={handleChange}
+                    placeholder="e.g. tablet"
+                    />
+                </label>
+                <label className="inventory__modal-field">
+                    <span>Price</span>
+                    <input
+                    type="number"
+                    name="price_per_unit"
+                    min="0"
+                    step="0.01"
+                    value={formData.price_per_unit}
+                    onChange={handleChange}
+                    required
+                    />
+                </label>
+                <label className="inventory__modal-field">
+                    <span>Stock</span>
+                    <input
+                    type="number"
+                    name="quantity_in_stock"
+                    min="0"
+                    step="1"
+                    value={formData.quantity_in_stock}
+                    onChange={handleChange}
+                    required
+                    />
+                </label>
+                <label className="inventory__modal-field">
+                    <span>Expiry Date</span>
+                    <input
+                    type="date"
+                    name="expiry_date"
+                    value={formData.expiry_date}
+                    onChange={handleChange}
+                    />
+                </label>
+                <label className="inventory__modal-field inventory__modal-field--checkbox">
+                    <input
+                    type="checkbox"
+                    name="is_available"
+                    checked={Boolean(formData.is_available)}
+                    onChange={handleChange}
+                    />
+                    <span>Available</span>
+                </label>
+
+                <div className="inventory__modal-actions">
+                    <button type="button" className="inventory__modal-cancel-btn" onClick={handleCloseModal}>
+                    Cancel
+                    </button>
+                    <button type="submit" className="inventory__modal-save-btn">
+                    Save
+                    </button>
+                </div>
+                </form>
+            </div>
+            </div>
+        )}
         </div>
     );
     }

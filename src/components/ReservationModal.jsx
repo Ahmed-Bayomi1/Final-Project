@@ -1,12 +1,12 @@
 import { useState } from 'react';
-import { supabase } from '../supabase';
+import { supabase } from '../supabaseClient';
 import './ReservationModal.css';
 
 export default function ReservationModal({ medicineItem, user, onClose, onSuccess }) {
     const [quantity, setQuantity] = useState(1);
     const [notes, setNotes] = useState('');
-    const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const [isCheckoutLoading, setIsCheckoutLoading] = useState(false);
 
     const maxQuantity = medicineItem.quantity_in_stock;
     const unitPrice = medicineItem.price_per_unit;
@@ -34,60 +34,43 @@ export default function ReservationModal({ medicineItem, user, onClose, onSucces
         }
     };
 
-    // Handle reservation submission
-    const handleReserve = async () => {
+    // Handle Stripe checkout flow
+    const handleConfirmReservation = async () => {
         try {
-            setLoading(true);
+            setIsCheckoutLoading(true);
             setError('');
 
-            // Validate inputs
             if (!quantity || quantity < 1 || quantity > maxQuantity) {
                 setError('Invalid quantity selected');
                 return;
             }
 
-            // Step 1: Create reservation
-            const { data: reservationData, error: reservationError } = await supabase
-                .from('reservations')
-                .insert({
-                    user_id: user.id,
-                    pharmacy_id: medicineItem.pharmacy_id,
-                    reservation_date: new Date().toISOString().split('T')[0],
-                    total_amount: parseFloat(subtotal),
-                    status: 'pending',
-                    payment_status: 'unpaid',
-                    notes: notes || null,
-                })
-                .select()
-                .single();
+            const parsedPrice = Number(String(unitPrice).replace(/[^0-9.-]+/g, ''));
+            const checkoutItem = {
+                name: medicineItem?.medicines?.name || 'Medicine',
+                price: parsedPrice,
+                quantity,
+            };
 
-            if (reservationError) throw reservationError;
-
-            const reservationId = reservationData.id;
-
-            // Step 2: Create reservation items
-            const { error: itemError } = await supabase
-                .from('reservation_items')
-                .insert({
-                    reservation_id: reservationId,
-                    medicine_id: medicineItem.medicine_id,
-                    pharmacy_medicine_id: medicineItem.id,
-                    quantity_requested: quantity,
-                    unit_price: unitPrice,
-                    subtotal: parseFloat(subtotal),
-                });
-
-            if (itemError) throw itemError;
-
-            // Success
-            onSuccess(
-                `✓ Reservation successful! Reservation ID: ${reservationId.slice(0, 8).toUpperCase()}`
+            const { data, error: checkoutError } = await supabase.functions.invoke(
+                'create-checkout-session',
+                { body: { items: [checkoutItem] } }
             );
+
+            if (checkoutError) {
+                console.error(checkoutError);
+                window.alert('Unable to start checkout. Please try again.');
+                return;
+            }
+
+            if (data?.url) {
+                window.location.href = data.url;
+            }
         } catch (err) {
-            console.error('Reservation error:', err);
-            setError(err.message || 'Failed to create reservation. Please try again.');
+            console.error('Checkout error:', err);
+            setError(err.message || 'Failed to start checkout. Please try again.');
         } finally {
-            setLoading(false);
+            setIsCheckoutLoading(false);
         }
     };
 
@@ -226,17 +209,17 @@ export default function ReservationModal({ medicineItem, user, onClose, onSucces
                         type="button"
                         className="btn btn--secondary"
                         onClick={onClose}
-                        disabled={loading}
+                        disabled={isCheckoutLoading}
                     >
                         Cancel
                     </button>
                     <button
                         type="button"
                         className="btn btn--primary"
-                        onClick={handleReserve}
-                        disabled={loading || !quantity}
+                        onClick={handleConfirmReservation}
+                        disabled={isCheckoutLoading || !quantity}
                     >
-                        {loading ? 'Processing...' : 'Confirm Reservation'}
+                        {isCheckoutLoading ? 'Processing...' : 'Confirm Reservation'}
                     </button>
                 </div>
             </div>

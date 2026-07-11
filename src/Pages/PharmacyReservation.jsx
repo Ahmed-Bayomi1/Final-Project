@@ -1,39 +1,6 @@
-    import { useState, useMemo } from "react";
+    import { useEffect, useMemo, useState } from "react";
+    import { supabase } from "../supabaseClient";
     import "./PharmacyReservation.css";
-
-    // Mock data — replace with real API calls once the backend endpoint is ready.
-    const INITIAL_RESERVATIONS = [
-    {
-        id: 1,
-        pickupCode: "RX-4821",
-        medicine: "Amoxicillin 500mg",
-        patient: "Sara Ahmed",
-        phone: "01012345678",
-        date: "2026-06-23",
-        price: 45,
-        status: "pending",
-    },
-    {
-        id: 2,
-        pickupCode: "RX-7104",
-        medicine: "Cetirizine 10mg",
-        patient: "Sara Ahmed",
-        phone: "01012345678",
-        date: "2026-06-22",
-        price: 28,
-        status: "collected",
-    },
-    {
-        id: 3,
-        pickupCode: "RX-5567",
-        medicine: "Atorvastatin 40mg",
-        patient: "Khaled Mostafa",
-        phone: "01234567890",
-        date: "2026-06-23",
-        price: 132,
-        status: "pending",
-    },
-    ];
 
     const STATUS_LABEL = {
     pending: "pending",
@@ -85,8 +52,56 @@
     }
 
     function PharmacyReservation() {
-    const [reservations, setReservations] = useState(INITIAL_RESERVATIONS);
+    const [reservations, setReservations] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchReservations = async () => {
+        try {
+            setLoading(true);
+            const { data, error } = await supabase
+            .from("reservations")
+            .select(`
+                *,
+                reservation_items(
+                subtotal,
+                quantity_requested,
+                medicines(name)
+                ),
+                users(name, phone)
+            `)
+            .order("reservation_date", { ascending: false });
+
+            if (error) throw error;
+
+            const mappedReservations = (data || []).map((reservation) => {
+            const item = reservation.reservation_items?.[0];
+            return {
+                id: reservation.id,
+                pickupCode: reservation.id?.slice(0, 8).toUpperCase() || "N/A",
+                medicine: item?.medicines?.name || "Unknown medicine",
+                patient: reservation.users?.name || "Unknown patient",
+                phone: reservation.users?.phone || "",
+                date: reservation.reservation_date
+                ? new Date(reservation.reservation_date).toLocaleDateString("en-GB")
+                : "—",
+                price: item?.subtotal ?? reservation.total_amount ?? 0,
+                status: reservation.status || "pending",
+            };
+            });
+
+            setReservations(mappedReservations);
+        } catch (err) {
+            console.error("Error fetching reservations:", err);
+            setReservations([]);
+        } finally {
+            setLoading(false);
+        }
+        };
+
+        fetchReservations();
+    }, []);
 
     const counts = useMemo(
         () => ({
@@ -108,14 +123,21 @@
         );
     }, [reservations, searchTerm]);
 
-    const advanceStatus = (id) => {
+    const handleUpdateStatus = async (reservationId, newStatus) => {
+        try {
+        const { error } = await supabase.from("reservations").update({ status: newStatus }).eq("id", reservationId);
+
+        if (error) throw error;
+
         setReservations((prev) =>
-        prev.map((r) => {
-            if (r.id !== id) return r;
-            const step = NEXT_STATUS[r.status];
-            return step ? { ...r, status: step.next } : r;
-        })
+            prev.map((reservation) =>
+            reservation.id === reservationId ? { ...reservation, status: newStatus } : reservation
+            )
         );
+        } catch (err) {
+        console.error("Error updating reservation status:", err);
+        window.alert("Failed to update reservation status.");
+        }
     };
 
     return (
@@ -189,7 +211,11 @@
                 </tr>
                 </thead>
                 <tbody>
-                {filteredReservations.map((r) => {
+                {loading ? (
+                    <tr>
+                    <td colSpan="8" className="pharmacy-reservation__empty">Loading reservations...</td>
+                    </tr>
+                ) : filteredReservations.map((r) => {
                     const step = NEXT_STATUS[r.status];
                     return (
                     <tr key={r.id}>
@@ -211,7 +237,7 @@
                             <button
                             type="button"
                             className="pharmacy-reservation__action-btn"
-                            onClick={() => advanceStatus(r.id)}
+                            onClick={() => handleUpdateStatus(r.id, step.next)}
                             >
                             {step.label}
                             </button>
@@ -232,7 +258,9 @@
 
             {/* Mobile stacked cards */}
             <div className="pharmacy-reservation__cards">
-            {filteredReservations.map((r) => {
+            {loading ? (
+                <p className="pharmacy-reservation__empty">Loading reservations...</p>
+            ) : filteredReservations.map((r) => {
                 const step = NEXT_STATUS[r.status];
                 return (
                 <div key={r.id} className="pharmacy-reservation__card">
@@ -270,7 +298,7 @@
                     <button
                         type="button"
                         className="pharmacy-reservation__action-btn pharmacy-reservation__action-btn--full"
-                        onClick={() => advanceStatus(r.id)}
+                        onClick={() => handleUpdateStatus(r.id, step.next)}
                     >
                         {step.label}
                     </button>
