@@ -30,13 +30,36 @@ function AuthModalContent({ role, onClose, hideSignUp = false }) {
         setSignInError('');
         setSignInLoading(true);
 
-        const { error } = await supabase.auth.signInWithPassword({
+        const { data, error } = await supabase.auth.signInWithPassword({
             email: signInEmail.trim(),
             password: signInPassword,
         });
 
         if (error) {
             setSignInError(error.message || 'Invalid email or password');
+            setSignInLoading(false);
+            return;
+        }
+
+        const expectedRole = role === 'admin' ? 'admin' : role === 'pharmacy' ? 'pharmacy_staff' : 'user';
+        const user = data?.user;
+
+        if (!user) {
+            await supabase.auth.signOut();
+            setSignInError('Access Denied: You do not have the required permissions for this portal.');
+            setSignInLoading(false);
+            return;
+        }
+
+        const { data: profile, error: profileError } = await supabase
+            .from('profiles')
+            .select('role')
+            .eq('id', user.id)
+            .single();
+
+        if (profileError || !profile?.role || profile.role !== expectedRole) {
+            await supabase.auth.signOut();
+            setSignInError('Access Denied: You do not have the required permissions for this portal.');
             setSignInLoading(false);
             return;
         }

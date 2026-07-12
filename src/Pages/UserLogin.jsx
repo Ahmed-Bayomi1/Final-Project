@@ -23,6 +23,26 @@ export default function UserLogin() {
             return;
         }
 
+        const user = data?.user;
+
+        if (!user) {
+            await supabase.auth.signOut();
+            setErrorMessage("Access Denied: You do not have the required permissions for this portal.");
+            return;
+        }
+
+        const { data: profile, error: profileError } = await supabase
+            .from("profiles")
+            .select("role")
+            .eq("id", user.id)
+            .single();
+
+        if (profileError || !profile?.role || profile.role !== "user") {
+            await supabase.auth.signOut();
+            setErrorMessage("Access Denied: You do not have the required permissions for this portal.");
+            return;
+        }
+
         if (data?.session) {
             alert("Login successful!");
             navigate("/userlayout");

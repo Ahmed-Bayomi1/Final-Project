@@ -412,6 +412,72 @@
     padding: 3rem 1.5rem;
     }
 
+    .mu-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    z-index: 50;
+    }
+
+    .mu-modal {
+    width: min(100%, 34rem);
+    background: #ffffff;
+    border-radius: 1rem;
+    box-shadow: 0 20px 40px rgba(15, 23, 42, 0.15);
+    padding: 1.25rem;
+    }
+
+    .mu-modal-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    }
+
+    .mu-modal-title {
+    margin: 0;
+    font-size: 1.1rem;
+    color: #0f172a;
+    }
+
+    .mu-modal-subtitle {
+    margin: 0.2rem 0 0;
+    font-size: 0.875rem;
+    color: #64748b;
+    }
+
+    .mu-modal-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.85rem;
+    }
+
+    .mu-modal-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    padding: 0.75rem;
+    border-radius: 0.75rem;
+    background: #f8fafc;
+    color: #475569;
+    }
+
+    .mu-modal-field span {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #64748b;
+    }
+
+    .mu-modal-field strong {
+    color: #0f172a;
+    }
+
     /* Responsive breakpoint: switch table -> cards below 768px */
     @media (max-width: 767px) {
     .mu-table-wrap {

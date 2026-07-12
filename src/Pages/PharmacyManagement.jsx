@@ -1,75 +1,155 @@
-    import React, { useState, useMemo } from "react";
-    import { Search, Plus, AlertTriangle, Trash2, Check, Building2, MapPin } from "lucide-react";
-    import "./PharmacyManagement.css";
+import React, { useState, useMemo, useEffect } from "react";
+import { Search, Plus, AlertTriangle, Trash2, Check, Building2, MapPin } from "lucide-react";
+import { supabase } from "../supabaseClient";
+import "./PharmacyManagement.css";
 
-    const INITIAL_PHARMACIES = [
-    {
-        id: 1,
-        name: "El-Shifa Pharmacy",
-        license: "PHR-2024-001",
-        owner: "Dr. Tarek Nasser",
-        governorate: "Cairo",
-        street: "15 Heliopolis Ave",
-        medicines: 7,
-        status: "active",
-    },
-    {
-        id: 2,
-        name: "Al-Amal Drug Store",
-        license: "PHR-2024-002",
-        owner: "Dr. Rana Kamal",
-        governorate: "Alexandria",
-        street: "3 Stanley Blvd",
-        medicines: 7,
-        status: "active",
-    },
-    {
-        id: 3,
-        name: "Cure Medical Pharmacy",
-        license: "PHR-2024-003",
-        owner: "Dr. Ahmed Farid",
-        governorate: "Giza",
-        street: "22 Mohandiseen",
-        medicines: 4,
-        status: "pending",
-    },
-    ];
-
-    function StatusPill({ status }) {
-    const isActive = status === "active";
+function StatusPill({ status }) {
+    const isActive = String(status || "").toLowerCase() === "active";
     return (
         <span className={`pm-status-pill ${isActive ? "pm-status-active" : "pm-status-pending"}`}>
-        {isActive ? "active" : "pending"}
+            {isActive ? "active" : "pending"}
         </span>
     );
-    }
+}
 
-    export default function PharmacyManagement() {
-    const [pharmacies, setPharmacies] = useState(INITIAL_PHARMACIES);
+const initialFormData = {
+    name: "",
+    license: "",
+    owner_name: "",
+    governorate: "",
+    street: "",
+    phone: "",
+    email: "",
+};
+
+export default function PharmacyManagement() {
+    const [pharmacies, setPharmacies] = useState([]);
     const [query, setQuery] = useState("");
+    const [loading, setLoading] = useState(true);
+    const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+    const [formData, setFormData] = useState(initialFormData);
+    const [submitting, setSubmitting] = useState(false);
+    const [toastMessage, setToastMessage] = useState("");
+
+    const fetchPharmacies = async () => {
+        try {
+            setLoading(true);
+            const { data, error } = await supabase.from("pharmacies").select("*");
+
+            if (error) {
+                throw error;
+            }
+
+            setPharmacies(data || []);
+        } catch (error) {
+            console.error("Error fetching pharmacies:", error.message || error);
+            setPharmacies([]);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchPharmacies();
+    }, []);
 
     const filtered = useMemo(() => {
         const q = query.trim().toLowerCase();
         if (!q) return pharmacies;
-        return pharmacies.filter(
-        (p) =>
-            p.name.toLowerCase().includes(q) ||
-            p.license.toLowerCase().includes(q) ||
-            p.owner.toLowerCase().includes(q) ||
-            p.governorate.toLowerCase().includes(q)
-        );
+
+        return pharmacies.filter((p) => {
+            const searchText = [
+                p.name,
+                p.pharmacy_name,
+                p.license,
+                p.license_number,
+                p.owner_name,
+                p.owner,
+                p.governorate,
+                p.city,
+            ]
+                .filter(Boolean)
+                .join(" ")
+                .toLowerCase();
+
+            return searchText.includes(q);
+        });
     }, [pharmacies, query]);
 
-    const pendingCount = pharmacies.filter((p) => p.status === "pending").length;
+    const totalPharmacies = pharmacies.length;
+    const pendingCount = pharmacies.filter((p) => String(p.status || "").toLowerCase() === "pending").length;
 
-    function approvePharmacy(id) {
-        setPharmacies((prev) =>
-        prev.map((p) => (p.id === id ? { ...p, status: "active" } : p))
-        );
+    async function approvePharmacy(id) {
+        try {
+            const { error } = await supabase.from("pharmacies").update({ status: "active" }).eq("id", id);
+
+            if (error) {
+                throw error;
+            }
+
+            setToastMessage("Pharmacy approved successfully.");
+            await fetchPharmacies();
+        } catch (error) {
+            console.error("Error approving pharmacy:", error.message || error);
+            setToastMessage("Could not approve pharmacy.");
+        }
     }
 
-    function deletePharmacy(id) {
-        setPharmacies((prev) => prev.filter((p) => p.id !== id));
+    async function deletePharmacy(id) {
+        const confirmed = window.confirm("Are you sure you want to delete this pharmacy?");
+        if (!confirmed) return;
+
+        try {
+            const { error } = await supabase.from("pharmacies").delete().eq("id", id);
+
+            if (error) {
+                throw error;
+            }
+
+            setToastMessage("Pharmacy deleted successfully.");
+            await fetchPharmacies();
+        } catch (error) {
+            console.error("Error deleting pharmacy:", error.message || error);
+            setToastMessage("Could not delete pharmacy.");
+        }
+    }
+
+    function handleInputChange(event) {
+        const { name, value } = event.target;
+        setFormData((prev) => ({ ...prev, [name]: value }));
+    }
+
+    async function handleAddPharmacy(event) {
+        event.preventDefault();
+
+        try {
+            setSubmitting(true);
+            const { error } = await supabase.from("pharmacies").insert([
+                {
+                    name: formData.name,
+                    license_number: formData.license,
+                    owner: formData.owner_name,
+                    governorate: formData.governorate,
+                    street: formData.street,
+                    phone: formData.phone,
+                    email: formData.email,
+                    address: `${formData.street}, ${formData.governorate}`,
+                    status: "pending",
+                },
+            ]);
+
+            if (error) {
+                throw error;
+            }
+
+            setIsAddModalOpen(false);
+            setFormData(initialFormData);
+            await fetchPharmacies();
+        } catch (error) {
+            console.error("Error adding pharmacy:", error.message || error);
+        } finally {
+            setSubmitting(false);
+        }
     }
 
     return (
@@ -80,15 +160,21 @@
             <div>
                 <h1 className="pm-title">Pharmacy Management</h1>
                 <p className="pm-subtitle">
-                {pharmacies.length} pharmac{pharmacies.length !== 1 ? "ies" : "y"}
-                {pendingCount > 0 && ` · ${pendingCount} pending approval`}
+                    {loading ? "Loading pharmacies..." : `${totalPharmacies} pharmac${totalPharmacies !== 1 ? "ies" : "y"}`}
+                    {!loading && pendingCount > 0 && ` · ${pendingCount} pending approval`}
                 </p>
             </div>
-            <button className="pm-btn-primary">
+            <button className="pm-btn-primary" onClick={() => setIsAddModalOpen(true)}>
                 <Plus className="pm-icon" />
                 Register Pharmacy
             </button>
             </div>
+
+            {toastMessage && (
+                <div className="pm-toast" role="status">
+                    {toastMessage}
+                </div>
+            )}
 
             {/* Pending approval banner */}
             {pendingCount > 0 && (
@@ -132,52 +218,60 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {filtered.map((p) => (
-                    <tr key={p.id}>
-                        <td>
-                        <div className="pm-name-cell">
-                            <div className="pm-icon-badge">
-                            <Building2 className="pm-badge-icon" />
-                            </div>
-                            <span className="pm-name">{p.name}</span>
-                        </div>
-                        </td>
-                        <td className="pm-mono">{p.license}</td>
-                        <td>{p.owner}</td>
-                        <td className="pm-link-text">{p.governorate}</td>
-                        <td className="pm-link-text pm-truncate">{p.street}</td>
-                        <td className="pm-align-right pm-medicines">{p.medicines}</td>
-                        <td>
-                        <StatusPill status={p.status} />
-                        </td>
-                        <td>
-                        <div className="pm-actions">
-                            {p.status === "pending" && (
-                            <button
-                                className="pm-btn-approve"
-                                onClick={() => approvePharmacy(p.id)}
-                            >
-                                <Check className="pm-icon-sm" />
-                                Approve
-                            </button>
-                            )}
-                            <button
-                            aria-label={`Delete ${p.name}`}
-                            className="pm-icon-btn pm-icon-btn--danger"
-                            onClick={() => deletePharmacy(p.id)}
-                            >
-                            <Trash2 className="pm-icon-sm" />
-                            </button>
-                        </div>
-                        </td>
-                    </tr>
-                    ))}
-                    {filtered.length === 0 && (
-                    <tr>
-                        <td colSpan={8} className="pm-empty">
-                        No pharmacies match your search.
-                        </td>
-                    </tr>
+                    {loading ? (
+                        <tr>
+                            <td colSpan={8} className="pm-empty">
+                                Loading pharmacies...
+                            </td>
+                        </tr>
+                    ) : (
+                        filtered.map((p) => (
+                            <tr key={p.id}>
+                                <td>
+                                    <div className="pm-name-cell">
+                                        <div className="pm-icon-badge">
+                                            <Building2 className="pm-badge-icon" />
+                                        </div>
+                                        <span className="pm-name">{p.name || p.pharmacy_name || "Unknown"}</span>
+                                    </div>
+                                </td>
+                                <td className="pm-mono">{p.license || p.license_number || "N/A"}</td>
+                                <td>{p.owner_name || p.owner || "N/A"}</td>
+                                <td className="pm-link-text">{p.governorate || p.city || "N/A"}</td>
+                                <td className="pm-link-text pm-truncate">{p.street || p.address || "N/A"}</td>
+                                <td className="pm-align-right pm-medicines">{p.medicines || p.medicine_count || 0}</td>
+                                <td>
+                                    <StatusPill status={p.status} />
+                                </td>
+                                <td>
+                                    <div className="pm-actions">
+                                        {String(p.status || "").toLowerCase() === "pending" && (
+                                            <button
+                                                className="pm-btn-approve"
+                                                onClick={() => approvePharmacy(p.id)}
+                                            >
+                                                <Check className="pm-icon-sm" />
+                                                Approve
+                                            </button>
+                                        )}
+                                        <button
+                                            aria-label={`Delete ${p.name || p.pharmacy_name || "pharmacy"}`}
+                                            className="pm-icon-btn pm-icon-btn--danger"
+                                            onClick={() => deletePharmacy(p.id)}
+                                        >
+                                            <Trash2 className="pm-icon-sm" />
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        ))
+                    )}
+                    {!loading && filtered.length === 0 && (
+                        <tr>
+                            <td colSpan={8} className="pm-empty">
+                                No pharmacies match your search.
+                            </td>
+                        </tr>
                     )}
                 </tbody>
                 </table>
@@ -185,61 +279,174 @@
 
             {/* Mobile card list */}
             <div className="pm-cards">
-                {filtered.map((p) => (
-                <div key={p.id} className="pm-mobile-card">
-                    <div className="pm-mobile-card__top">
-                    <div className="pm-name-cell">
-                        <div className="pm-icon-badge">
-                        <Building2 className="pm-badge-icon" />
-                        </div>
-                        <div>
-                        <p className="pm-name">{p.name}</p>
-                        <p className="pm-mono pm-mobile-license">{p.license}</p>
-                        </div>
-                    </div>
-                    <StatusPill status={p.status} />
-                    </div>
+                {loading ? (
+                    <div className="pm-empty pm-empty--mobile">Loading pharmacies...</div>
+                ) : (
+                    filtered.map((p) => (
+                        <div key={p.id} className="pm-mobile-card">
+                            <div className="pm-mobile-card__top">
+                                <div className="pm-name-cell">
+                                    <div className="pm-icon-badge">
+                                        <Building2 className="pm-badge-icon" />
+                                    </div>
+                                    <div>
+                                        <p className="pm-name">{p.name || p.pharmacy_name || "Unknown"}</p>
+                                        <p className="pm-mono pm-mobile-license">{p.license || p.license_number || "N/A"}</p>
+                                    </div>
+                                </div>
+                                <StatusPill status={p.status} />
+                            </div>
 
-                    <div className="pm-mobile-grid">
-                    <div className="pm-mobile-field">Owner: {p.owner}</div>
-                    <div className="pm-mobile-field pm-link-text">{p.governorate}</div>
-                    <div className="pm-mobile-field pm-mobile-field--full pm-link-text">
-                        <MapPin className="pm-mobile-field-icon" />
-                        <span className="pm-truncate">{p.street}</span>
-                    </div>
-                    </div>
+                            <div className="pm-mobile-grid">
+                                <div className="pm-mobile-field">Owner: {p.owner_name || p.owner || "N/A"}</div>
+                                <div className="pm-mobile-field pm-link-text">{p.governorate || p.city || "N/A"}</div>
+                                <div className="pm-mobile-field pm-mobile-field--full pm-link-text">
+                                    <MapPin className="pm-mobile-field-icon" />
+                                    <span className="pm-truncate">{p.street || p.address || "N/A"}</span>
+                                </div>
+                            </div>
 
-                    <div className="pm-mobile-footer">
-                    <span className="pm-mobile-medicines">
-                        <strong>{p.medicines}</strong> medicines
-                    </span>
-                    <div className="pm-actions">
-                        {p.status === "pending" && (
-                        <button
-                            className="pm-btn-approve"
-                            onClick={() => approvePharmacy(p.id)}
-                        >
-                            <Check className="pm-icon-sm" />
-                            Approve
-                        </button>
-                        )}
-                        <button
-                        aria-label={`Delete ${p.name}`}
-                        className="pm-icon-btn pm-icon-btn--danger"
-                        onClick={() => deletePharmacy(p.id)}
-                        >
-                        <Trash2 className="pm-icon-sm" />
-                        </button>
-                    </div>
-                    </div>
-                </div>
-                ))}
-                {filtered.length === 0 && (
-                <div className="pm-empty pm-empty--mobile">No pharmacies match your search.</div>
+                            <div className="pm-mobile-footer">
+                                <span className="pm-mobile-medicines">
+                                    <strong>{p.medicines || p.medicine_count || 0}</strong> medicines
+                                </span>
+                                <div className="pm-actions">
+                                    {String(p.status || "").toLowerCase() === "pending" && (
+                                        <button
+                                            className="pm-btn-approve"
+                                            onClick={() => approvePharmacy(p.id)}
+                                        >
+                                            <Check className="pm-icon-sm" />
+                                            Approve
+                                        </button>
+                                    )}
+                                    <button
+                                        aria-label={`Delete ${p.name || p.pharmacy_name || "pharmacy"}`}
+                                        className="pm-icon-btn pm-icon-btn--danger"
+                                        onClick={() => deletePharmacy(p.id)}
+                                    >
+                                        <Trash2 className="pm-icon-sm" />
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    ))
+                )}
+                {!loading && filtered.length === 0 && (
+                    <div className="pm-empty pm-empty--mobile">No pharmacies match your search.</div>
                 )}
             </div>
             </div>
+
+            {isAddModalOpen && (
+                <div className="pm-modal-backdrop" onClick={() => setIsAddModalOpen(false)}>
+                    <div className="pm-modal" onClick={(event) => event.stopPropagation()}>
+                        <div className="pm-modal-header">
+                            <div>
+                                <h2 className="pm-modal-title">Add Pharmacy</h2>
+                                <p className="pm-modal-subtitle">Create a new pharmacy entry in the registry.</p>
+                            </div>
+                            <button
+                                type="button"
+                                className="pm-icon-btn pm-icon-btn--danger"
+                                onClick={() => setIsAddModalOpen(false)}
+                            >
+                                ✕
+                            </button>
+                        </div>
+
+                        <form className="pm-modal-form" onSubmit={handleAddPharmacy}>
+                            <div className="pm-form-grid">
+                                <label className="pm-form-field">
+                                    <span>Pharmacy Name</span>
+                                    <input
+                                        name="name"
+                                        value={formData.name}
+                                        onChange={handleInputChange}
+                                        placeholder="Enter pharmacy name"
+                                        required
+                                    />
+                                </label>
+                                <label className="pm-form-field">
+                                    <span>License No.</span>
+                                    <input
+                                        name="license"
+                                        value={formData.license}
+                                        onChange={handleInputChange}
+                                        placeholder="Enter license number"
+                                        required
+                                    />
+                                </label>
+                                <label className="pm-form-field">
+                                    <span>Owner</span>
+                                    <input
+                                        name="owner_name"
+                                        value={formData.owner_name}
+                                        onChange={handleInputChange}
+                                        placeholder="Enter owner name"
+                                        required
+                                    />
+                                </label>
+                                <label className="pm-form-field">
+                                    <span>Governorate</span>
+                                    <input
+                                        name="governorate"
+                                        value={formData.governorate}
+                                        onChange={handleInputChange}
+                                        placeholder="Enter governorate"
+                                        required
+                                    />
+                                </label>
+                                <label className="pm-form-field">
+                                    <span>Street</span>
+                                    <input
+                                        name="street"
+                                        value={formData.street}
+                                        onChange={handleInputChange}
+                                        placeholder="Enter street address"
+                                        required
+                                    />
+                                </label>
+                                <label className="pm-form-field">
+                                    <span>Phone Number</span>
+                                    <input
+                                        name="phone"
+                                        value={formData.phone}
+                                        onChange={handleInputChange}
+                                        placeholder="Enter phone number"
+                                        required
+                                    />
+                                </label>
+                                <label className="pm-form-field">
+                                    <span>Email</span>
+                                    <input
+                                        name="email"
+                                        type="email"
+                                        value={formData.email}
+                                        onChange={handleInputChange}
+                                        placeholder="Enter email address"
+                                        required
+                                    />
+                                </label>
+                            </div>
+
+                            <div className="pm-modal-actions">
+                                <button
+                                    type="button"
+                                    className="pm-btn-secondary"
+                                    onClick={() => setIsAddModalOpen(false)}
+                                >
+                                    Cancel
+                                </button>
+                                <button type="submit" className="pm-btn-primary" disabled={submitting}>
+                                    {submitting ? "Saving..." : "Save Pharmacy"}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
         </div>
         </div>
     );
-    }
+}

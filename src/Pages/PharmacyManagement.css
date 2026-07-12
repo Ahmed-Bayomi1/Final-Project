@@ -94,6 +94,17 @@
     color: #d97706;
     }
 
+    .pm-toast {
+    margin-bottom: 1rem;
+    border-radius: 0.75rem;
+    border: 1px solid #bbf7d0;
+    background-color: #ecfdf5;
+    color: #166534;
+    padding: 0.8rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    }
+
     /* Card container */
     .pm-card {
     border-radius: 1rem;
@@ -399,6 +410,111 @@
 
     .pm-empty--mobile {
     padding: 3rem 1.5rem;
+    }
+
+    .pm-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    z-index: 1000;
+    }
+
+    .pm-modal {
+    width: min(100%, 560px);
+    background: #ffffff;
+    border-radius: 1rem;
+    box-shadow: 0 20px 45px rgba(15, 23, 42, 0.2);
+    border: 1px solid #e2e8f0;
+    padding: 1.25rem;
+    }
+
+    .pm-modal-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    }
+
+    .pm-modal-title {
+    margin: 0;
+    font-size: 1.1rem;
+    color: #0f172a;
+    }
+
+    .pm-modal-subtitle {
+    margin: 0.25rem 0 0;
+    font-size: 0.875rem;
+    color: #64748b;
+    }
+
+    .pm-modal-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    }
+
+    .pm-form-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.85rem;
+    }
+
+    .pm-form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    font-size: 0.875rem;
+    color: #334155;
+    }
+
+    .pm-form-field span {
+    font-weight: 600;
+    }
+
+    .pm-form-field input {
+    border: 1px solid #e2e8f0;
+    border-radius: 0.6rem;
+    padding: 0.7rem 0.8rem;
+    font-size: 0.9rem;
+    color: #0f172a;
+    background: #ffffff;
+    }
+
+    .pm-form-field input:focus {
+    outline: none;
+    border-color: #a5b4fc;
+    box-shadow: 0 0 0 3px #e0e7ff;
+    }
+
+    .pm-form-field--full {
+    grid-column: 1 / -1;
+    }
+
+    .pm-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    margin-top: 0.25rem;
+    }
+
+    .pm-btn-secondary {
+    border: 1px solid #e2e8f0;
+    background: #ffffff;
+    color: #334155;
+    border-radius: 0.5rem;
+    padding: 0.65rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    }
+
+    .pm-btn-secondary:hover {
+    background: #f8fafc;
     }
 
     /* Responsive breakpoint: switch table -> cards below 768px */
