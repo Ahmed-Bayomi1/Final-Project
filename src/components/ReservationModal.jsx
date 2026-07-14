@@ -36,6 +36,8 @@ export default function ReservationModal({ medicineItem, user, onClose, onSucces
 
     // Handle Stripe checkout flow
     const handleConfirmReservation = async () => {
+        let createdReservationId = null;
+
         try {
             setIsCheckoutLoading(true);
             setError('');
@@ -45,12 +47,94 @@ export default function ReservationModal({ medicineItem, user, onClose, onSucces
                 return;
             }
 
+            if (!user?.id) {
+                setError('You must be logged in to reserve a medicine.');
+                return;
+            }
+
             const parsedPrice = Number(String(unitPrice).replace(/[^0-9.-]+/g, ''));
+            const subtotalValue = Number((quantity * parsedPrice).toFixed(2));
             const checkoutItem = {
                 name: medicineItem?.medicines?.name || 'Medicine',
                 price: parsedPrice,
                 quantity,
             };
+
+            const reservationDate = new Date().toISOString().slice(0, 10);
+            const reservationNotes = notes.trim() || null;
+
+            console.log('Starting reservation creation', {
+                userId: user.id,
+                pharmacyId: medicineItem?.pharmacy_id,
+                medicineId: medicineItem?.medicines?.id,
+                quantity,
+                subtotalValue,
+                reservationDate,
+                notes: reservationNotes,
+            });
+
+            const { data: reservationData, error: reservationError } = await supabase
+                .from('reservations')
+                .insert([{
+                    user_id: user.id,
+                    pharmacy_id: medicineItem?.pharmacy_id,
+                    reservation_date: reservationDate,
+                    total_amount: subtotalValue,
+                    status: 'pending',
+                    payment_status: 'unpaid',
+                    notes: reservationNotes,
+                }])
+                .select('id')
+                .single();
+
+            if (reservationError) {
+                console.error('Reservation insert failed', {
+                    error: reservationError,
+                    payload: {
+                        user_id: user.id,
+                        pharmacy_id: medicineItem?.pharmacy_id,
+                        reservation_date: reservationDate,
+                        total_amount: subtotalValue,
+                        status: 'pending',
+                        payment_status: 'unpaid',
+                        notes: reservationNotes,
+                    },
+                });
+                throw reservationError;
+            }
+
+            createdReservationId = reservationData?.id;
+            console.log('Reservation insert succeeded', { reservationId: createdReservationId, reservationData });
+
+            const { error: reservationItemError } = await supabase
+                .from('reservation_items')
+                .insert([{
+                    reservation_id: createdReservationId,
+                    medicine_id: medicineItem?.medicines?.id,
+                    pharmacy_medicine_id: medicineItem?.id,
+                    quantity_requested: quantity,
+                    unit_price: parsedPrice,
+                    subtotal: subtotalValue,
+                }]);
+
+            if (reservationItemError) {
+                console.error('Reservation item insert failed', {
+                    error: reservationItemError,
+                    reservationId: createdReservationId,
+                    payload: {
+                        reservation_id: createdReservationId,
+                        medicine_id: medicineItem?.medicines?.id,
+                        pharmacy_medicine_id: medicineItem?.id,
+                        quantity_requested: quantity,
+                        unit_price: parsedPrice,
+                        subtotal: subtotalValue,
+                    },
+                });
+                throw reservationItemError;
+            }
+
+            console.log('Reservation item insert succeeded', { reservationId: createdReservationId });
+            localStorage.setItem('pendingReservationId', createdReservationId);
 
             const { data, error: checkoutError } = await supabase.functions.invoke(
                 'create-checkout-session',
@@ -58,6 +142,10 @@ export default function ReservationModal({ medicineItem, user, onClose, onSucces
             );
 
             if (checkoutError) {
+                localStorage.removeItem('pendingReservationId');
+                console.error('Checkout session creation failed', { error: checkoutError, createdReservationId });
+                await supabase.from('reservation_items').delete().eq('reservation_id', createdReservationId);
+                await supabase.from('reservations').delete().eq('id', createdReservationId);
                 console.error(checkoutError);
                 window.alert('Unable to start checkout. Please try again.');
                 return;
@@ -67,6 +155,15 @@ export default function ReservationModal({ medicineItem, user, onClose, onSucces
                 window.location.href = data.url;
             }
         } catch (err) {
+            if (createdReservationId) {
+                try {
+                    await supabase.from('reservation_items').delete().eq('reservation_id', createdReservationId);
+                    await supabase.from('reservations').delete().eq('id', createdReservationId);
+                    localStorage.removeItem('pendingReservationId');
+                } catch (cleanupErr) {
+                    console.error('Cleanup error:', cleanupErr);
+                }
+            }
             console.error('Checkout error:', err);
             setError(err.message || 'Failed to start checkout. Please try again.');
         } finally {

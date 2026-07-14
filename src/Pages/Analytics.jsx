@@ -122,10 +122,10 @@
         preserveAspectRatio="xMidYMid meet"
         >
         {/* Gridlines */}
-        {yTicks.map((tick) => {
+        {yTicks.map((tick, index) => {
             const y = padding.top + chartH - (tick / maxValue) * chartH;
             return (
-            <g key={tick}>
+            <g key={`y-tick-${index}`}>
                 <line
                 x1={padding.left}
                 y1={y}
@@ -144,8 +144,8 @@
         <path d={linePath} className="analytics__line-path" fill="none" />
 
         {/* Points + x labels */}
-        {points.map((p) => (
-            <g key={p.day}>
+        {points.map((p, index) => (
+            <g key={`point-${p.day}-${index}`}>
             <circle cx={p.x} cy={p.y} r="5" className="analytics__line-dot" />
             <text
                 x={p.x}

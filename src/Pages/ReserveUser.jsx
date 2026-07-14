@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { supabase } from '../supabase';
 import './ReserveUser.css';
 
@@ -12,11 +13,12 @@ function getStats(reservations) {
 
 // Transform nested Supabase data into format expected by UI
 function transformReservation(data) {
-    const medicines = data.reservation_items.map(item => 
-        `${item.medicines.name} ${item.medicines.dosage}`
+    const items = data.reservation_items || [];
+    const medicines = items.map(item => 
+        `${item.medicines?.name || 'Medicine'} ${item.medicines?.dosage || ''}`.trim()
     ).join(', ');
     
-    const totalPrice = data.reservation_items.reduce((sum, item) => 
+    const totalPrice = items.reduce((sum, item) => 
         sum + (item.subtotal || item.quantity_requested * item.unit_price), 0
     );
 
@@ -96,9 +98,11 @@ function ReservationCard({ reservation }) {
 }
 
 export default function ReserveUser() {
+    const location = useLocation();
     const [reservations, setReservations] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [successMessage, setSuccessMessage] = useState('');
 
     useEffect(() => {
         async function fetchReservations() {
@@ -112,6 +116,32 @@ export default function ReserveUser() {
                     setError('Not authenticated');
                     setReservations([]);
                     return;
+                }
+
+                const paymentSuccess = new URLSearchParams(location.search).get('success') === 'true';
+                const pendingReservationId = localStorage.getItem('pendingReservationId');
+
+                console.log('Reservation page loaded', {
+                    search: location.search,
+                    paymentSuccess,
+                    pendingReservationId,
+                    userId: user.id,
+                });
+
+                if (paymentSuccess && pendingReservationId) {
+                    const { error: updateError } = await supabase
+                        .from('reservations')
+                        .update({ payment_status: 'paid' })
+                        .eq('id', pendingReservationId)
+                        .eq('user_id', user.id);
+
+                    if (updateError) {
+                        console.error('Reservation payment update failed', { updateError, pendingReservationId, userId: user.id });
+                    } else {
+                        localStorage.removeItem('pendingReservationId');
+                        console.log('Reservation payment update succeeded', { pendingReservationId });
+                        setSuccessMessage('Reservation saved successfully. Your payment was completed and it is now visible below.');
+                    }
                 }
 
                 // Fetch reservations with pharmacy and medicine details
@@ -131,8 +161,11 @@ export default function ReserveUser() {
                     .order('reservation_date', { ascending: false });
 
                 if (fetchError) {
+                    console.error('Reservations fetch failed', { fetchError, userId: user.id });
                     throw fetchError;
                 }
+
+                console.log('Reservations fetch succeeded', { count: data?.length || 0, rows: data });
 
                 // Transform data for UI
                 const transformedData = (data || []).map(transformReservation);
@@ -147,7 +180,7 @@ export default function ReserveUser() {
         }
 
         fetchReservations();
-    }, []);
+    }, [location.search]);
 
     const stats = getStats(reservations);
 
@@ -180,6 +213,24 @@ export default function ReserveUser() {
                         {reservations.length} total reservations
                     </p>
                 </header>
+
+                {successMessage && (
+                    <div
+                        role="status"
+                        aria-live="polite"
+                        style={{
+                            marginBottom: '1rem',
+                            padding: '0.9rem 1rem',
+                            borderRadius: '12px',
+                            background: '#ecfdf3',
+                            color: '#047857',
+                            border: '1px solid #a7f3d0',
+                            fontWeight: 600,
+                        }}
+                    >
+                        ✓ {successMessage}
+                    </div>
+                )}
 
                 <div className="reserve-user__stats">
                     <StatCard label="PENDING" value={stats.pending} icon="🕐" variant="pending" />

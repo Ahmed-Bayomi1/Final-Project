@@ -13,6 +13,7 @@ import HomeUser from "../Pages/HomeUser";
 import SearchUser from "../Pages/SearchUser";
 import ReserveUser from "../Pages/ReserveUser";
 import ProfileUser from "../Pages/ProfileUser";
+import ReservationSuccess from "../Pages/ReservationSuccess";
 
 // لاحظ: مسحنا الـ import بتاع MedicineBrowse لأنه هيتدمج جوه HomeUser
 
@@ -33,6 +34,7 @@ export default function AppRoutes() {
   return (
     <Routes>
       <Route path={PATHS.HOME} element={<LandingPage />} />
+      <Route path="/reservation" element={<ReservationSuccess />} />
 
       <Route path={PATHS.USER_LOGIN} element={<UserLogin />} />
       <Route path={PATHS.USER_SIGNUP} element={<UserSignUp />} />

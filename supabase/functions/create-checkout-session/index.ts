@@ -50,7 +50,7 @@ serve(async (req) => {
           quantity: productData.quantity || 1,
         },
       ],
-      success_url: `${origin}/reservation?success=true`,
+      success_url: `${origin}/user/reservations?success=true`,
       cancel_url: `${origin}/user?canceled=true`,
     });
 

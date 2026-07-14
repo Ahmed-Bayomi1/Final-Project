@@ -34,13 +34,20 @@ export default function PharmacyManagement() {
     const fetchPharmacies = async () => {
         try {
             setLoading(true);
-            const { data, error } = await supabase.from("pharmacies").select("*");
+            const { data, error } = await supabase
+                .from("pharmacies")
+                .select("*, pharmacy_medicines(id)");
 
             if (error) {
                 throw error;
             }
 
-            setPharmacies(data || []);
+            const pharmaciesWithCounts = (data || []).map((pharmacy) => ({
+                ...pharmacy,
+                medicine_count: pharmacy.pharmacy_medicines?.length ?? 0,
+            }));
+
+            setPharmacies(pharmaciesWithCounts);
         } catch (error) {
             console.error("Error fetching pharmacies:", error.message || error);
             setPharmacies([]);
@@ -225,8 +232,8 @@ export default function PharmacyManagement() {
                             </td>
                         </tr>
                     ) : (
-                        filtered.map((p) => (
-                            <tr key={p.id}>
+                        filtered.map((p, index) => (
+                            <tr key={`${p.id ?? "pharmacy"}-${index}`}>
                                 <td>
                                     <div className="pm-name-cell">
                                         <div className="pm-icon-badge">
@@ -282,8 +289,8 @@ export default function PharmacyManagement() {
                 {loading ? (
                     <div className="pm-empty pm-empty--mobile">Loading pharmacies...</div>
                 ) : (
-                    filtered.map((p) => (
-                        <div key={p.id} className="pm-mobile-card">
+                    filtered.map((p, index) => (
+                        <div key={`${p.id ?? "pharmacy"}-${index}`} className="pm-mobile-card">
                             <div className="pm-mobile-card__top">
                                 <div className="pm-name-cell">
                                     <div className="pm-icon-badge">

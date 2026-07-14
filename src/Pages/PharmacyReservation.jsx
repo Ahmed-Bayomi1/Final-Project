@@ -69,7 +69,7 @@
                 quantity_requested,
                 medicines(name)
                 ),
-                users(name, phone)
+                profiles(full_name, phone_number)
             `)
             .order("reservation_date", { ascending: false });
 
@@ -81,8 +81,8 @@
                 id: reservation.id,
                 pickupCode: reservation.id?.slice(0, 8).toUpperCase() || "N/A",
                 medicine: item?.medicines?.name || "Unknown medicine",
-                patient: reservation.users?.name || "Unknown patient",
-                phone: reservation.users?.phone || "",
+                patient: reservation.profiles?.full_name || "Unknown patient",
+                phone: reservation.profiles?.phone_number || "",
                 date: reservation.reservation_date
                 ? new Date(reservation.reservation_date).toLocaleDateString("en-GB")
                 : "—",
