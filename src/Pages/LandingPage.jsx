@@ -23,7 +23,7 @@ function AuthModalContent({ role, onClose, hideSignUp = false }) {
     const [loading, setLoading] = useState(false);
     const isPharmacy = role === 'pharmacy';
     const isAdmin = role === 'admin';
-    const shouldShowSignUp = !hideSignUp;
+    const showSignUpTabs = role === 'user' && !hideSignUp;
 
     async function handleSignIn(event) {
         event.preventDefault();
@@ -152,15 +152,15 @@ function AuthModalContent({ role, onClose, hideSignUp = false }) {
                             : 'Sign in to your PharmaCare account'}
                 </p>
 
-                {shouldShowSignUp ? (
-                    <div className="landing-page__auth-tabs d-flex flex-row">
-                        <button
-                            type="button"
-                            className={`landing-page__auth-tab flex-fill ${activeTab === 'sign-in' ? 'landing-page__auth-tab--active' : ''}`}
-                            onClick={() => setActiveTab('sign-in')}
-                        >
-                            Sign In
-                        </button>
+                <div className="landing-page__auth-tabs d-flex flex-row">
+                    <button
+                        type="button"
+                        className={`landing-page__auth-tab flex-fill ${activeTab === 'sign-in' ? 'landing-page__auth-tab--active' : ''}`}
+                        onClick={() => setActiveTab('sign-in')}
+                    >
+                        Sign In
+                    </button>
+                    {showSignUpTabs ? (
                         <button
                             type="button"
                             className={`landing-page__auth-tab flex-fill ${activeTab === 'sign-up' ? 'landing-page__auth-tab--active' : ''}`}
@@ -168,17 +168,8 @@ function AuthModalContent({ role, onClose, hideSignUp = false }) {
                         >
                             Sign Up
                         </button>
-                    </div>
-                ) : (
-                    <div className="landing-page__auth-tabs d-flex flex-row">
-                        <button
-                            type="button"
-                            className="landing-page__auth-tab landing-page__auth-tab--active flex-fill"
-                        >
-                            Sign In
-                        </button>
-                    </div>
-                )}
+                    ) : null}
+                </div>
 
                 {activeTab === 'sign-in' ? (
                     <form className="landing-page__auth-panel" onSubmit={handleSignIn}>
@@ -437,7 +428,7 @@ export default function LandingPage() {
                     <AuthModalContent
                         role={modalRole}
                         onClose={closeUserModal}
-                        hideSignUp={modalRole === 'admin'}
+                        hideSignUp={modalRole !== 'user'}
                     />
                 )}
             </main>

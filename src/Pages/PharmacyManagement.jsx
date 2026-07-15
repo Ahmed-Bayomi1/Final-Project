@@ -20,6 +20,7 @@ const initialFormData = {
     street: "",
     phone: "",
     email: "",
+    password: "",
 };
 
 export default function PharmacyManagement() {
@@ -131,29 +132,49 @@ export default function PharmacyManagement() {
 
         try {
             setSubmitting(true);
-            const { error } = await supabase.from("pharmacies").insert([
-                {
-                    name: formData.name,
-                    license_number: formData.license,
-                    owner: formData.owner_name,
-                    governorate: formData.governorate,
-                    street: formData.street,
-                    phone: formData.phone,
-                    email: formData.email,
-                    address: `${formData.street}, ${formData.governorate}`,
-                    status: "pending",
+
+            const {
+                data: { session },
+            } = await supabase.auth.getSession();
+
+            if (!session?.access_token) {
+                throw new Error("Your admin session is no longer active. Please sign in again.");
+            }
+
+            const payload = {
+                name: formData.name.trim(),
+                license_number: formData.license.trim(),
+                owner_name: formData.owner_name.trim(),
+                governorate: formData.governorate.trim(),
+                street: formData.street.trim(),
+                phone: formData.phone.trim(),
+                email: formData.email.trim(),
+                password: formData.password,
+            };
+
+            const { data, error } = await supabase.functions.invoke("create-pharmacy-user", {
+                body: payload,
+                headers: {
+                    Authorization: `Bearer ${session.access_token}`,
                 },
-            ]);
+            });
 
             if (error) {
                 throw error;
             }
 
+            if (!data?.success || !data.pharmacy) {
+                const message = data?.error?.message || data?.error || "Failed to register pharmacy account.";
+                throw new Error(message);
+            }
+
+            setToastMessage("Pharmacy registered successfully.");
             setIsAddModalOpen(false);
             setFormData(initialFormData);
             await fetchPharmacies();
         } catch (error) {
             console.error("Error adding pharmacy:", error.message || error);
+            setToastMessage(error.message || "Could not register pharmacy.");
         } finally {
             setSubmitting(false);
         }
@@ -432,6 +453,17 @@ export default function PharmacyManagement() {
                                         value={formData.email}
                                         onChange={handleInputChange}
                                         placeholder="Enter email address"
+                                        required
+                                    />
+                                </label>
+                                <label className="pm-form-field">
+                                    <span>Password</span>
+                                    <input
+                                        name="password"
+                                        type="password"
+                                        value={formData.password}
+                                        onChange={handleInputChange}
+                                        placeholder="Create account password"
                                         required
                                     />
                                 </label>

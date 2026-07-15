@@ -17,7 +17,6 @@ export const PATHS = {
     PHARMACY_RESERVATIONS: "/pharmacy/reservations",
 
     PHARMACY_LOGIN: "/pharmacy/login",
-    PHARMACY_SIGNUP: "/pharmacy/signup",
 
     ADMIN_LOGIN: "/admin/login",
     ADMIN_SIGNUP: "/admin/signup",
