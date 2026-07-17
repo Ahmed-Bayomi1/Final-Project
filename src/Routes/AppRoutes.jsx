@@ -7,7 +7,7 @@ import PharmacyLogin from "../Pages/PharmacyLogin";
 import AdminLogin from "../Pages/AdminLogin";
 import AdminSignUp from "../Pages/AdminSignUp";
 
-import UserLayout from "../layout/UserLayout";
+import Userlayout from "../layout/Userlayout";
 import HomeUser from "../Pages/HomeUser";
 import SearchUser from "../Pages/SearchUser";
 import ReserveUser from "../Pages/ReserveUser";
@@ -43,7 +43,7 @@ export default function AppRoutes() {
       <Route path={PATHS.ADMIN_LOGIN} element={<AdminLogin />} />
       <Route path={PATHS.ADMIN_SIGNUP} element={<AdminSignUp />} />
 
-      <Route path="/user" element={<UserLayout />}>
+      <Route path="/user" element={<Userlayout />}>
         <Route index element={<HomeUser />} />
         <Route path="home" element={<HomeUser />} />
         <Route path="search" element={<SearchUser />} />
